@@ -130,7 +130,6 @@ export default function Dashboard() {
               alt="360 Creation"
               style={{ height: '48px', width: 'auto', marginBottom: '16px', display: 'block', margin: '0 auto 16px' }}
             />
-            <h1 style={{ color: '#252525', fontSize: '24px', fontWeight: '700' }}>Dashboard</h1>
           </div>
           <form onSubmit={handleLogin}>
             <input
