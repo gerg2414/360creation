@@ -14,6 +14,9 @@ export async function POST(request) {
     const extras = formData.get('extras')
     const trade = formData.get('trade') || 'plumber'
     const logo = formData.get('logo')
+    const utmSource = formData.get('utmSource') || null
+    const utmMedium = formData.get('utmMedium') || null
+    const utmCampaign = formData.get('utmCampaign') || null
 
     // Upload logo to Supabase Storage
     let logoUrl = null
@@ -50,7 +53,10 @@ export async function POST(request) {
         extras: extras || null,
         trade: trade,
         logo_url: logoUrl,
-        status: 'new'
+        status: 'new',
+        utm_source: utmSource,
+        utm_medium: utmMedium,
+        utm_campaign: utmCampaign
       })
       .select()
       .single()

@@ -73,6 +73,12 @@ const PlumberMockupPage = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Capture UTM params from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const utmSource = urlParams.get('utm_source') || '';
+    const utmMedium = urlParams.get('utm_medium') || '';
+    const utmCampaign = urlParams.get('utm_campaign') || '';
+
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('firstName', formData.firstName);
@@ -82,6 +88,9 @@ const PlumberMockupPage = () => {
       formDataToSend.append('phone', formData.phone);
       formDataToSend.append('extras', formData.extras);
       formDataToSend.append('trade', 'plumber');
+      formDataToSend.append('utmSource', utmSource);
+      formDataToSend.append('utmMedium', utmMedium);
+      formDataToSend.append('utmCampaign', utmCampaign);
 
       // Get the logo file from the input
       const logoInput = document.querySelector('input[type="file"]');

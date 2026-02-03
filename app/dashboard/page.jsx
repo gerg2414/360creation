@@ -10,7 +10,8 @@ export default function Dashboard() {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [viewingLogo, setViewingLogo] = useState(null);
-  const [viewMode, setViewMode] = useState('table'); // 'table' or 'pipeline'
+  const [viewMode, setViewMode] = useState('table'); // 'table', 'pipeline', or 'analytics'
+  const [draggedItem, setDraggedItem] = useState(null);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -269,7 +270,188 @@ export default function Dashboard() {
           >
             Pipeline View
           </button>
+          <button
+            onClick={() => setViewMode('analytics')}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: viewMode === 'analytics' ? '#EE2C7C' : 'white',
+              color: viewMode === 'analytics' ? 'white' : '#666',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            Analytics
+          </button>
         </div>
+
+        {/* Analytics View */}
+        {viewMode === 'analytics' && (
+          <div style={{ marginBottom: '32px' }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '24px'
+            }}>
+              {/* Leads by Source */}
+              <div style={{
+                backgroundColor: 'white',
+                borderRadius: '12px',
+                padding: '24px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+              }}>
+                <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: '600', color: '#252525' }}>
+                  Leads by Source
+                </h3>
+                {(() => {
+                  const sources = submissions.reduce((acc, sub) => {
+                    const source = sub.utm_source || 'Direct / Organic';
+                    acc[source] = (acc[source] || 0) + 1;
+                    return acc;
+                  }, {});
+                  return Object.entries(sources).map(([source, count]) => (
+                    <div key={source} style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '12px 0',
+                      borderBottom: '1px solid #eee'
+                    }}>
+                      <span style={{ color: '#252525', fontSize: '14px' }}>{source}</span>
+                      <span style={{
+                        backgroundColor: '#EE2C7C',
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        fontSize: '13px',
+                        fontWeight: '600'
+                      }}>{count}</span>
+                    </div>
+                  ));
+                })()}
+              </div>
+
+              {/* Leads by Campaign */}
+              <div style={{
+                backgroundColor: 'white',
+                borderRadius: '12px',
+                padding: '24px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+              }}>
+                <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: '600', color: '#252525' }}>
+                  Leads by Campaign
+                </h3>
+                {(() => {
+                  const campaigns = submissions.reduce((acc, sub) => {
+                    const campaign = sub.utm_campaign || 'No Campaign';
+                    acc[campaign] = (acc[campaign] || 0) + 1;
+                    return acc;
+                  }, {});
+                  return Object.entries(campaigns).map(([campaign, count]) => (
+                    <div key={campaign} style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '12px 0',
+                      borderBottom: '1px solid #eee'
+                    }}>
+                      <span style={{ color: '#252525', fontSize: '14px' }}>{campaign}</span>
+                      <span style={{
+                        backgroundColor: '#3B82F6',
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        fontSize: '13px',
+                        fontWeight: '600'
+                      }}>{count}</span>
+                    </div>
+                  ));
+                })()}
+              </div>
+
+              {/* Leads by Medium */}
+              <div style={{
+                backgroundColor: 'white',
+                borderRadius: '12px',
+                padding: '24px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+              }}>
+                <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: '600', color: '#252525' }}>
+                  Leads by Medium
+                </h3>
+                {(() => {
+                  const mediums = submissions.reduce((acc, sub) => {
+                    const medium = sub.utm_medium || 'None';
+                    acc[medium] = (acc[medium] || 0) + 1;
+                    return acc;
+                  }, {});
+                  return Object.entries(mediums).map(([medium, count]) => (
+                    <div key={medium} style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '12px 0',
+                      borderBottom: '1px solid #eee'
+                    }}>
+                      <span style={{ color: '#252525', fontSize: '14px' }}>{medium}</span>
+                      <span style={{
+                        backgroundColor: '#10B981',
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        fontSize: '13px',
+                        fontWeight: '600'
+                      }}>{count}</span>
+                    </div>
+                  ));
+                })()}
+              </div>
+
+              {/* Conversion Rate */}
+              <div style={{
+                backgroundColor: 'white',
+                borderRadius: '12px',
+                padding: '24px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+              }}>
+                <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: '600', color: '#252525' }}>
+                  Conversion Funnel
+                </h3>
+                {[
+                  { label: 'Total Leads', count: submissions.length, color: '#252525' },
+                  { label: 'Mockup Sent', count: submissions.filter(s => ['mockup_sent', 'followed_up', 'converted'].includes(s.status)).length, color: '#3B82F6' },
+                  { label: 'Followed Up', count: submissions.filter(s => ['followed_up', 'converted'].includes(s.status)).length, color: '#8B5CF6' },
+                  { label: 'Converted', count: submissions.filter(s => s.status === 'converted').length, color: '#10B981' },
+                ].map((stage) => (
+                  <div key={stage.label} style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '12px 0',
+                    borderBottom: '1px solid #eee'
+                  }}>
+                    <span style={{ color: '#252525', fontSize: '14px' }}>{stage.label}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        backgroundColor: stage.color,
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        fontSize: '13px',
+                        fontWeight: '600'
+                      }}>{stage.count}</span>
+                      <span style={{ color: '#888', fontSize: '12px' }}>
+                        {submissions.length > 0 ? Math.round((stage.count / submissions.length) * 100) : 0}%
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Pipeline View */}
         {viewMode === 'pipeline' && (
@@ -287,12 +469,25 @@ export default function Dashboard() {
               { status: 'followed_up', label: 'Followed Up', color: '#8B5CF6' },
               { status: 'converted', label: 'Converted', color: '#EE2C7C' },
             ].map((stage) => (
-              <div key={stage.status} style={{
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                padding: '16px',
-                minWidth: '200px'
-              }}>
+              <div
+                key={stage.status}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  if (draggedItem && draggedItem.status !== stage.status) {
+                    updateStatus(draggedItem.id, stage.status);
+                  }
+                  setDraggedItem(null);
+                }}
+                style={{
+                  backgroundColor: draggedItem ? '#f0f0f0' : 'white',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  minWidth: '200px',
+                  minHeight: '200px',
+                  transition: 'background-color 0.2s'
+                }}
+              >
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -319,13 +514,17 @@ export default function Dashboard() {
                     .map((sub) => (
                       <div
                         key={sub.id}
+                        draggable
+                        onDragStart={() => setDraggedItem(sub)}
+                        onDragEnd={() => setDraggedItem(null)}
                         onClick={() => setSelectedSubmission(sub)}
                         style={{
-                          backgroundColor: '#f7f8f8',
+                          backgroundColor: draggedItem?.id === sub.id ? '#ddd' : '#f7f8f8',
                           borderRadius: '8px',
                           padding: '12px',
-                          cursor: 'pointer',
-                          transition: 'background-color 0.2s'
+                          cursor: 'grab',
+                          transition: 'background-color 0.2s',
+                          opacity: draggedItem?.id === sub.id ? 0.5 : 1
                         }}
                       >
                         <div style={{ fontWeight: '600', fontSize: '14px', color: '#252525', marginBottom: '4px' }}>
@@ -337,6 +536,19 @@ export default function Dashboard() {
                         <div style={{ fontSize: '11px', color: '#aaa' }}>
                           {sub.location}
                         </div>
+                        {sub.utm_source && (
+                          <div style={{
+                            fontSize: '10px',
+                            color: '#3B82F6',
+                            marginTop: '6px',
+                            backgroundColor: '#EFF6FF',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            display: 'inline-block'
+                          }}>
+                            {sub.utm_source}
+                          </div>
+                        )}
                       </div>
                     ))}
                 </div>
