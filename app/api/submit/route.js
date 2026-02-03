@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-import { sendAdminNotification } from '@/lib/email'
+import { sendAdminNotification, sendCustomerConfirmation } from '@/lib/email'
 
 export async function POST(request) {
   try {
     const formData = await request.formData()
-    
+
     const firstName = formData.get('firstName')
     const businessName = formData.get('businessName')
     const location = formData.get('location')
@@ -20,7 +20,7 @@ export async function POST(request) {
     if (logo && logo.size > 0) {
       const fileExt = logo.name.split('.').pop()
       const fileName = `${Date.now()}-${businessName.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.${fileExt}`
-      
+
       const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
         .from('logos')
         .upload(fileName, logo, {
@@ -62,6 +62,9 @@ export async function POST(request) {
 
     // Send admin notification
     await sendAdminNotification(submission)
+
+    // Send customer confirmation
+    await sendCustomerConfirmation(submission)
 
     return NextResponse.json({ success: true, id: submission.id })
 

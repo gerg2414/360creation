@@ -9,6 +9,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [viewingLogo, setViewingLogo] = useState(null);
+  const [viewMode, setViewMode] = useState('table'); // 'table' or 'pipeline'
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -123,18 +125,11 @@ export default function Dashboard() {
           maxWidth: '400px'
         }}>
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <div style={{
-              width: '48px',
-              height: '48px',
-              backgroundColor: '#EE2C7C',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 16px'
-            }}>
-              <span style={{ color: 'white', fontWeight: 'bold', fontSize: '14px' }}>360</span>
-            </div>
+            <img
+              src="/logo.png"
+              alt="360 Creation"
+              style={{ height: '48px', width: 'auto', marginBottom: '16px' }}
+            />
             <h1 style={{ color: '#252525', fontSize: '24px', fontWeight: '700' }}>Dashboard</h1>
           </div>
           <form onSubmit={handleLogin}>
@@ -191,17 +186,11 @@ export default function Dashboard() {
         alignItems: 'center'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{
-            width: '36px',
-            height: '36px',
-            backgroundColor: '#EE2C7C',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <span style={{ color: 'white', fontWeight: 'bold', fontSize: '12px' }}>360</span>
-          </div>
+          <img
+            src="/logo.png"
+            alt="360 Creation"
+            style={{ height: '32px', width: 'auto' }}
+          />
           <span style={{ fontWeight: '600', color: '#252525', fontSize: '16px' }}>Mockup Dashboard</span>
         </div>
         <button
@@ -249,156 +238,322 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Submissions Table */}
-        <div style={{
-          backgroundColor: 'white',
-          borderRadius: '12px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-          overflow: 'hidden'
-        }}>
+        {/* View Toggle */}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+          <button
+            onClick={() => setViewMode('table')}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: viewMode === 'table' ? '#EE2C7C' : 'white',
+              color: viewMode === 'table' ? 'white' : '#666',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            Table View
+          </button>
+          <button
+            onClick={() => setViewMode('pipeline')}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: viewMode === 'pipeline' ? '#EE2C7C' : 'white',
+              color: viewMode === 'pipeline' ? 'white' : '#666',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            Pipeline View
+          </button>
+        </div>
+
+        {/* Pipeline View */}
+        {viewMode === 'pipeline' && (
           <div style={{
-            padding: '20px 24px',
-            borderBottom: '1px solid #eee',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
+            display: 'grid',
+            gridTemplateColumns: 'repeat(5, 1fr)',
+            gap: '16px',
+            marginBottom: '32px',
+            overflowX: 'auto'
           }}>
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#252525' }}>
-              Submissions
-            </h2>
+            {[
+              { status: 'new', label: 'New', color: '#F59E0B' },
+              { status: 'in_progress', label: 'In Progress', color: '#3B82F6' },
+              { status: 'mockup_sent', label: 'Mockup Sent', color: '#10B981' },
+              { status: 'followed_up', label: 'Followed Up', color: '#8B5CF6' },
+              { status: 'converted', label: 'Converted', color: '#EE2C7C' },
+            ].map((stage) => (
+              <div key={stage.status} style={{
+                backgroundColor: 'white',
+                borderRadius: '12px',
+                padding: '16px',
+                minWidth: '200px'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '16px',
+                  paddingBottom: '12px',
+                  borderBottom: `3px solid ${stage.color}`
+                }}>
+                  <span style={{ fontWeight: '600', color: '#252525' }}>{stage.label}</span>
+                  <span style={{
+                    backgroundColor: stage.color,
+                    color: 'white',
+                    padding: '2px 8px',
+                    borderRadius: '10px',
+                    fontSize: '12px',
+                    fontWeight: '600'
+                  }}>
+                    {submissions.filter(s => s.status === stage.status).length}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {submissions
+                    .filter(s => s.status === stage.status)
+                    .map((sub) => (
+                      <div
+                        key={sub.id}
+                        onClick={() => setSelectedSubmission(sub)}
+                        style={{
+                          backgroundColor: '#f7f8f8',
+                          borderRadius: '8px',
+                          padding: '12px',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s'
+                        }}
+                      >
+                        <div style={{ fontWeight: '600', fontSize: '14px', color: '#252525', marginBottom: '4px' }}>
+                          {sub.first_name}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>
+                          {sub.business_name}
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#aaa' }}>
+                          {sub.location}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Submissions Table */}
+        {viewMode === 'table' && (
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              padding: '20px 24px',
+              borderBottom: '1px solid #eee',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: '#252525' }}>
+                Submissions
+              </h2>
+              <button
+                onClick={fetchSubmissions}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#f7f8f8',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  color: '#666'
+                }}
+              >
+                Refresh
+              </button>
+            </div>
+
+            {loading ? (
+              <div style={{ padding: '48px', textAlign: 'center', color: '#888' }}>Loading...</div>
+            ) : submissions.length === 0 ? (
+              <div style={{ padding: '48px', textAlign: 'center', color: '#888' }}>No submissions yet</div>
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#f7f8f8' }}>
+                      <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '13px', color: '#666', fontWeight: '600' }}>Name / Business</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '13px', color: '#666', fontWeight: '600' }}>Location</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '13px', color: '#666', fontWeight: '600' }}>Email</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '13px', color: '#666', fontWeight: '600' }}>Status</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '13px', color: '#666', fontWeight: '600' }}>Date</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '13px', color: '#666', fontWeight: '600' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {submissions.map((sub) => (
+                      <tr key={sub.id} style={{ borderBottom: '1px solid #eee' }}>
+                        <td style={{ padding: '16px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            {sub.logo_url && (
+                              <img
+                                src={sub.logo_url}
+                                alt="Logo"
+                                onClick={() => setViewingLogo(sub.logo_url)}
+                                style={{ width: '40px', height: '40px', objectFit: 'contain', borderRadius: '6px', backgroundColor: '#f7f8f8', cursor: 'pointer' }}
+                              />
+                            )}
+                            <div>
+                              <div style={{ fontWeight: '600', color: '#252525' }}>{sub.first_name}</div>
+                              <div style={{ fontSize: '13px', color: '#888' }}>{sub.business_name}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ padding: '16px', color: '#666' }}>{sub.location}</td>
+                        <td style={{ padding: '16px' }}>
+                          <a href={`mailto:${sub.email}`} style={{ color: '#EE2C7C', textDecoration: 'none' }}>{sub.email}</a>
+                          {sub.phone && <div style={{ fontSize: '13px', color: '#888' }}>{sub.phone}</div>}
+                        </td>
+                        <td style={{ padding: '16px' }}>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '4px 12px',
+                            borderRadius: '20px',
+                            fontSize: '13px',
+                            fontWeight: '500',
+                            backgroundColor: statusColors[sub.status]?.bg || '#E5E7EB',
+                            color: statusColors[sub.status]?.text || '#374151'
+                          }}>
+                            {sub.status.replace('_', ' ')}
+                          </span>
+                        </td>
+                        <td style={{ padding: '16px', color: '#888', fontSize: '14px' }}>
+                          {new Date(sub.created_at).toLocaleDateString('en-GB')}
+                        </td>
+                        <td style={{ padding: '16px' }}>
+                          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            <button
+                              onClick={() => setSelectedSubmission(sub)}
+                              style={{
+                                padding: '6px 12px',
+                                backgroundColor: '#EE2C7C',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                fontSize: '13px'
+                              }}
+                            >
+                              {sub.mockup_url ? 'Update Mockup' : 'Upload Mockup'}
+                            </button>
+                            {sub.mockup_url && (
+                              <a
+                                href={`/mockup/${sub.id}`}
+                                target="_blank"
+                                style={{
+                                  padding: '6px 12px',
+                                  backgroundColor: '#f7f8f8',
+                                  color: '#666',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  textDecoration: 'none',
+                                  fontSize: '13px'
+                                }}
+                              >
+                                View
+                              </a>
+                            )}
+                            <select
+                              value={sub.status}
+                              onChange={(e) => updateStatus(sub.id, e.target.value)}
+                              style={{
+                                padding: '6px 12px',
+                                border: '1px solid #ddd',
+                                borderRadius: '6px',
+                                fontSize: '13px',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              <option value="new">New</option>
+                              <option value="in_progress">In Progress</option>
+                              <option value="mockup_sent">Mockup Sent</option>
+                              <option value="followed_up">Followed Up</option>
+                              <option value="converted">Converted</option>
+                              <option value="closed">Closed</option>
+                            </select>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Logo Modal */}
+      {viewingLogo && (
+        <div
+          onClick={() => setViewingLogo(null)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            cursor: 'pointer',
+            padding: '40px'
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '500px',
+              maxHeight: '80vh',
+              overflow: 'auto'
+            }}
+          >
+            <img
+              src={viewingLogo}
+              alt="Logo"
+              style={{ width: '100%', height: 'auto' }}
+            />
             <button
-              onClick={fetchSubmissions}
+              onClick={() => setViewingLogo(null)}
               style={{
-                padding: '8px 16px',
+                marginTop: '16px',
+                width: '100%',
+                padding: '12px',
                 backgroundColor: '#f7f8f8',
                 border: 'none',
-                borderRadius: '6px',
+                borderRadius: '8px',
                 cursor: 'pointer',
                 fontSize: '14px',
                 color: '#666'
               }}
             >
-              Refresh
+              Close
             </button>
           </div>
-
-          {loading ? (
-            <div style={{ padding: '48px', textAlign: 'center', color: '#888' }}>Loading...</div>
-          ) : submissions.length === 0 ? (
-            <div style={{ padding: '48px', textAlign: 'center', color: '#888' }}>No submissions yet</div>
-          ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ backgroundColor: '#f7f8f8' }}>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '13px', color: '#666', fontWeight: '600' }}>Name / Business</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '13px', color: '#666', fontWeight: '600' }}>Location</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '13px', color: '#666', fontWeight: '600' }}>Email</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '13px', color: '#666', fontWeight: '600' }}>Status</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '13px', color: '#666', fontWeight: '600' }}>Date</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '13px', color: '#666', fontWeight: '600' }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {submissions.map((sub) => (
-                    <tr key={sub.id} style={{ borderBottom: '1px solid #eee' }}>
-                      <td style={{ padding: '16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          {sub.logo_url && (
-                            <img 
-                              src={sub.logo_url} 
-                              alt="Logo"
-                              style={{ width: '40px', height: '40px', objectFit: 'contain', borderRadius: '6px', backgroundColor: '#f7f8f8' }}
-                            />
-                          )}
-                          <div>
-                            <div style={{ fontWeight: '600', color: '#252525' }}>{sub.first_name}</div>
-                            <div style={{ fontSize: '13px', color: '#888' }}>{sub.business_name}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td style={{ padding: '16px', color: '#666' }}>{sub.location}</td>
-                      <td style={{ padding: '16px' }}>
-                        <a href={`mailto:${sub.email}`} style={{ color: '#EE2C7C', textDecoration: 'none' }}>{sub.email}</a>
-                        {sub.phone && <div style={{ fontSize: '13px', color: '#888' }}>{sub.phone}</div>}
-                      </td>
-                      <td style={{ padding: '16px' }}>
-                        <span style={{
-                          display: 'inline-block',
-                          padding: '4px 12px',
-                          borderRadius: '20px',
-                          fontSize: '13px',
-                          fontWeight: '500',
-                          backgroundColor: statusColors[sub.status]?.bg || '#E5E7EB',
-                          color: statusColors[sub.status]?.text || '#374151'
-                        }}>
-                          {sub.status.replace('_', ' ')}
-                        </span>
-                      </td>
-                      <td style={{ padding: '16px', color: '#888', fontSize: '14px' }}>
-                        {new Date(sub.created_at).toLocaleDateString('en-GB')}
-                      </td>
-                      <td style={{ padding: '16px' }}>
-                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                          <button
-                            onClick={() => setSelectedSubmission(sub)}
-                            style={{
-                              padding: '6px 12px',
-                              backgroundColor: '#EE2C7C',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '6px',
-                              cursor: 'pointer',
-                              fontSize: '13px'
-                            }}
-                          >
-                            {sub.mockup_url ? 'Update Mockup' : 'Upload Mockup'}
-                          </button>
-                          {sub.mockup_url && (
-                            <a
-                              href={`/mockup/${sub.id}`}
-                              target="_blank"
-                              style={{
-                                padding: '6px 12px',
-                                backgroundColor: '#f7f8f8',
-                                color: '#666',
-                                border: 'none',
-                                borderRadius: '6px',
-                                textDecoration: 'none',
-                                fontSize: '13px'
-                              }}
-                            >
-                              View
-                            </a>
-                          )}
-                          <select
-                            value={sub.status}
-                            onChange={(e) => updateStatus(sub.id, e.target.value)}
-                            style={{
-                              padding: '6px 12px',
-                              border: '1px solid #ddd',
-                              borderRadius: '6px',
-                              fontSize: '13px',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <option value="new">New</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="mockup_sent">Mockup Sent</option>
-                            <option value="followed_up">Followed Up</option>
-                            <option value="converted">Converted</option>
-                            <option value="closed">Closed</option>
-                          </select>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
         </div>
-      </div>
+      )}
 
       {/* Upload Modal */}
       {selectedSubmission && (
@@ -449,8 +604,8 @@ export default function Dashboard() {
               {selectedSubmission.logo_url && (
                 <div style={{ marginTop: '12px' }}>
                   <strong style={{ fontSize: '14px' }}>Logo:</strong>
-                  <img 
-                    src={selectedSubmission.logo_url} 
+                  <img
+                    src={selectedSubmission.logo_url}
                     alt="Logo"
                     style={{ display: 'block', maxWidth: '150px', marginTop: '8px', borderRadius: '6px' }}
                   />
