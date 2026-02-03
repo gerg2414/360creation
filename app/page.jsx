@@ -636,6 +636,107 @@ const PlumberMockupPage = () => {
         />
       )}
 
+      {/* Reviews Section */}
+      <section style={{
+        padding: '80px 24px',
+        backgroundColor: '#ffffff'
+      }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+            <h2 style={{
+              color: '#252525',
+              fontSize: '32px',
+              fontWeight: '700',
+              marginBottom: '12px'
+            }}>
+              What our customers say
+            </h2>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}>
+              <div style={{ display: 'flex', gap: '2px' }}>
+                {[1, 2, 3, 4, 5].map(i => (
+                  <span key={i} style={{ color: '#FBBC04', fontSize: '20px' }}>★</span>
+                ))}
+              </div>
+              <span style={{ color: '#252525', fontSize: '15px', fontWeight: '600' }}>5.0</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style={{ width: '20px', height: '20px' }}>
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+              </svg>
+              <span style={{ color: '#666', fontSize: '15px' }}>40 reviews on Google</span>
+            </div>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '24px',
+            marginBottom: '32px'
+          }}>
+            {[
+              {
+                name: 'Simon H.',
+                text: 'Excellent service, design and aftercare. Would highly recommend!',
+              },
+              {
+                name: 'Rich A.',
+                text: "First class service from start to finish. My requirements were not straightforward, but Greg dealt with it perfectly for me. Highly recommend.",
+              },
+              {
+                name: 'Ryan H.',
+                text: "Greg designed a website for me and I couldn't be happier with the work he's done. His knowledge and professionalism is great and he communicates very well.",
+              }
+            ].map((review, index) => (
+              <div
+                key={index}
+                style={{
+                  backgroundColor: '#f7f8f8',
+                  borderRadius: '12px',
+                  padding: '28px',
+                }}
+              >
+                <div style={{ display: 'flex', gap: '2px', marginBottom: '16px' }}>
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <span key={i} style={{ color: '#FBBC04', fontSize: '16px' }}>★</span>
+                  ))}
+                </div>
+                <p style={{
+                  color: '#252525',
+                  fontSize: '15px',
+                  lineHeight: '1.6',
+                  marginBottom: '20px',
+                }}>
+                  "{review.text}"
+                </p>
+                <div style={{ color: '#252525', fontSize: '14px', fontWeight: '600' }}>{review.name}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <a
+              href="https://www.google.com/search?q=360+creation+monmouth"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: '#EE2C7C',
+                fontSize: '15px',
+                fontWeight: '600',
+                textDecoration: 'none'
+              }}
+            >
+              See all reviews on Google →
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Form */}
       <section id="form" style={{
         padding: '80px 24px',
@@ -1016,98 +1117,6 @@ const PlumberMockupPage = () => {
                     {faq.answer}
                   </p>
                 )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Reviews Section */}
-      <section style={{
-        padding: '80px 24px',
-        backgroundColor: '#f7f8f8'
-      }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-            <h2 style={{
-              color: '#252525',
-              fontSize: '32px',
-              fontWeight: '700',
-              marginBottom: '12px'
-            }}>
-              What our customers say
-            </h2>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px'
-            }}>
-              <div style={{ display: 'flex', gap: '2px' }}>
-                {[1, 2, 3, 4, 5].map(i => (
-                  <span key={i} style={{ color: '#FBBC04', fontSize: '20px' }}>★</span>
-                ))}
-              </div>
-              <span style={{ color: '#252525', fontSize: '15px', fontWeight: '600' }}>5.0</span>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style={{ width: '20px', height: '20px' }}>
-                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
-                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
-                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
-                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
-              </svg>
-              <span style={{ color: '#666', fontSize: '15px' }}>40 reviews on Google</span>
-            </div>
-          </div>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '24px'
-          }}>
-            {[
-              {
-                name: 'Brian M.',
-                location: 'Ross-on-Wye',
-                text: 'Excellent service, design and aftercare. Would highly recommend!',
-              },
-              {
-                name: 'Sarah T.',
-                location: 'Monmouth',
-                text: 'Really impressed with the quality of work. Professional from start to finish.',
-              },
-              {
-                name: 'Dave K.',
-                location: 'Hereford',
-                text: 'Transformed our online presence. We\'re getting more enquiries than ever.',
-              }
-            ].map((review, index) => (
-              <div
-                key={index}
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: '12px',
-                  padding: '28px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-                }}
-              >
-                <div style={{ display: 'flex', gap: '2px', marginBottom: '16px' }}>
-                  {[1, 2, 3, 4, 5].map(i => (
-                    <span key={i} style={{ color: '#FBBC04', fontSize: '16px' }}>★</span>
-                  ))}
-                </div>
-                <p style={{
-                  color: '#252525',
-                  fontSize: '15px',
-                  lineHeight: '1.6',
-                  marginBottom: '20px',
-                  fontStyle: 'italic'
-                }}>
-                  "{review.text}"
-                </p>
-                <div>
-                  <div style={{ color: '#252525', fontSize: '14px', fontWeight: '600' }}>{review.name}</div>
-                  <div style={{ color: '#888', fontSize: '13px' }}>{review.location}</div>
-                </div>
               </div>
             ))}
           </div>
