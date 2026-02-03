@@ -128,7 +128,7 @@ export default function Dashboard() {
             <img
               src="/logo.png"
               alt="360 Creation"
-              style={{ height: '48px', width: 'auto', marginBottom: '16px' }}
+              style={{ height: '48px', width: 'auto', marginBottom: '16px', display: 'block', margin: '0 auto 16px' }}
             />
             <h1 style={{ color: '#252525', fontSize: '24px', fontWeight: '700' }}>Dashboard</h1>
           </div>
@@ -156,7 +156,7 @@ export default function Dashboard() {
                 backgroundColor: '#EE2C7C',
                 color: 'white',
                 border: 'none',
-                borderRadius: '50px',
+                borderRadius: '100px',
                 fontSize: '15px',
                 fontWeight: '600',
                 cursor: 'pointer'
