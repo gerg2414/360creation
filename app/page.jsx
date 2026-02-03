@@ -19,21 +19,21 @@ const PlumberMockupPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const examples = [
-    { 
-      business: 'Mr. Rooter Plumbing', 
-      location: 'Sussex', 
+    {
+      business: 'Mr. Rooter Plumbing',
+      location: 'Sussex',
       color: '#C41230',
       image: '/mockups/mr-rooter.png'
     },
-    { 
-      business: 'Rapid Response Plumbing', 
-      location: 'Cardiff', 
+    {
+      business: 'Rapid Response Plumbing',
+      location: 'Cardiff',
       color: '#0d47a1',
       image: '/mockups/rapid-response.png'
     },
-    { 
-      business: 'ProFlow Plumbing & Heating', 
-      location: 'Newport', 
+    {
+      business: 'ProFlow Plumbing & Heating',
+      location: 'Newport',
       color: '#00838f',
       image: '/mockups/proflow.png'
     },
@@ -72,7 +72,7 @@ const PlumberMockupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('firstName', formData.firstName);
@@ -82,7 +82,7 @@ const PlumberMockupPage = () => {
       formDataToSend.append('phone', formData.phone);
       formDataToSend.append('extras', formData.extras);
       formDataToSend.append('trade', 'plumber');
-      
+
       // Get the logo file from the input
       const logoInput = document.querySelector('input[type="file"]');
       if (logoInput?.files[0]) {
@@ -116,7 +116,7 @@ const PlumberMockupPage = () => {
   };
 
   const MockupCard = ({ example, onClick }) => (
-    <div 
+    <div
       onClick={onClick}
       style={{
         backgroundColor: '#1a1a1a',
@@ -151,16 +151,16 @@ const PlumberMockupPage = () => {
           {example.business.toLowerCase().replace(/['\s.]/g, '')}.co.uk
         </div>
       </div>
-      
+
       {/* Mockup image */}
-      <div style={{ 
-        height: '280px', 
+      <div style={{
+        height: '450px',
         overflow: 'hidden',
         backgroundColor: '#fff'
       }}>
         {example.image ? (
-          <img 
-            src={example.image} 
+          <img
+            src={example.image}
             alt={`${example.business} website mockup`}
             style={{
               width: '100%',
@@ -169,7 +169,7 @@ const PlumberMockupPage = () => {
             }}
           />
         ) : (
-          <div style={{ 
+          <div style={{
             padding: '16px',
             height: '100%',
             display: 'flex',
@@ -181,7 +181,7 @@ const PlumberMockupPage = () => {
           </div>
         )}
       </div>
-      
+
       {/* Info bar */}
       <div style={{
         backgroundColor: '#2d2d2d',
@@ -208,7 +208,7 @@ const PlumberMockupPage = () => {
   );
 
   const ImageModal = ({ example, onClose }) => (
-    <div 
+    <div
       onClick={onClose}
       style={{
         position: 'fixed',
@@ -226,7 +226,7 @@ const PlumberMockupPage = () => {
         cursor: 'pointer'
       }}
     >
-      <div 
+      <div
         onClick={(e) => e.stopPropagation()}
         style={{
           backgroundColor: '#1a1a1a',
@@ -275,11 +275,11 @@ const PlumberMockupPage = () => {
             ×
           </button>
         </div>
-        
+
         {/* Full image */}
         <div style={{ maxHeight: '80vh', overflow: 'auto' }}>
-          <img 
-            src={example.image} 
+          <img
+            src={example.image}
             alt={`${example.business} website mockup`}
             style={{
               width: '100%',
@@ -288,7 +288,7 @@ const PlumberMockupPage = () => {
             }}
           />
         </div>
-        
+
         {/* Info bar */}
         <div style={{
           backgroundColor: '#2d2d2d',
@@ -320,18 +320,11 @@ const PlumberMockupPage = () => {
         margin: '0 auto'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            width: '36px',
-            height: '36px',
-            backgroundColor: '#EE2C7C',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <span style={{ color: 'white', fontWeight: 'bold', fontSize: '12px' }}>360</span>
-          </div>
-          <span style={{ fontWeight: '600', color: '#252525', fontSize: '15px' }}>Creation</span>
+          <img
+            src="/logo.png"
+            alt="360 Creation"
+            style={{ height: '36px', width: 'auto' }}
+          />
         </div>
         <a href="#form" style={{
           color: 'white',
@@ -373,7 +366,7 @@ const PlumberMockupPage = () => {
             }}>
               🇬🇧 Designed for 100+ UK Plumbers
             </p>
-            
+
             <h1 style={{
               color: '#252525',
               fontSize: 'clamp(32px, 5vw, 44px)',
@@ -383,7 +376,7 @@ const PlumberMockupPage = () => {
             }}>
               Your new plumber website mockup design, no cost.
             </h1>
-            
+
             <p style={{
               color: '#EE2C7C',
               fontSize: 'clamp(20px, 3vw, 26px)',
@@ -392,7 +385,7 @@ const PlumberMockupPage = () => {
             }}>
               Like it? We'll talk.
             </p>
-            
+
             <p style={{
               color: '#666',
               fontSize: '16px',
@@ -411,7 +404,7 @@ const PlumberMockupPage = () => {
               marginBottom: '10px'
             }}>
               <div style={{ display: 'flex', gap: '2px' }}>
-                {[1,2,3,4,5].map(i => (
+                {[1, 2, 3, 4, 5].map(i => (
                   <span key={i} style={{ color: '#FBBC04', fontSize: '18px' }}>★</span>
                 ))}
               </div>
@@ -428,7 +421,7 @@ const PlumberMockupPage = () => {
               "Excellent service, design and aftercare. Would highly recommend!"
             </p>
 
-            <a 
+            <a
               href="#form"
               style={{
                 display: 'inline-block',
@@ -447,11 +440,11 @@ const PlumberMockupPage = () => {
 
           {/* Right - Carousel */}
           <div style={{ position: 'relative' }}>
-            <MockupCard 
-              example={examples[currentSlide]} 
+            <MockupCard
+              example={examples[currentSlide]}
               onClick={() => setModalOpen(true)}
             />
-            
+
             {/* Carousel controls */}
             <div style={{
               display: 'flex',
@@ -478,7 +471,7 @@ const PlumberMockupPage = () => {
               >
                 ←
               </button>
-              
+
               {/* Dots */}
               <div style={{ display: 'flex', gap: '8px' }}>
                 {examples.map((_, index) => (
@@ -497,7 +490,7 @@ const PlumberMockupPage = () => {
                   />
                 ))}
               </div>
-              
+
               <button
                 onClick={nextSlide}
                 style={{
@@ -523,9 +516,9 @@ const PlumberMockupPage = () => {
 
       {/* Modal */}
       {modalOpen && (
-        <ImageModal 
-          example={examples[currentSlide]} 
-          onClose={() => setModalOpen(false)} 
+        <ImageModal
+          example={examples[currentSlide]}
+          onClose={() => setModalOpen(false)}
         />
       )}
 
@@ -582,9 +575,9 @@ const PlumberMockupPage = () => {
                   }}>
                     {logoPreview ? (
                       <div>
-                        <img 
-                          src={logoPreview} 
-                          alt="Logo" 
+                        <img
+                          src={logoPreview}
+                          alt="Logo"
                           style={{ maxWidth: '120px', maxHeight: '70px' }}
                         />
                         <p style={{ color: '#EE2C7C', fontSize: '13px', marginTop: '8px', marginBottom: 0 }}>Click to change</p>
@@ -594,8 +587,8 @@ const PlumberMockupPage = () => {
                         Click to upload your logo
                       </p>
                     )}
-                    <input 
-                      type="file" 
+                    <input
+                      type="file"
                       accept="image/*"
                       onChange={handleLogoUpload}
                       style={{
@@ -626,7 +619,7 @@ const PlumberMockupPage = () => {
                     type="text"
                     placeholder="e.g. Dave"
                     value={formData.firstName}
-                    onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                     required
                     style={{
                       width: '100%',
@@ -656,7 +649,7 @@ const PlumberMockupPage = () => {
                       type="text"
                       placeholder="e.g. Smith's Plumbing"
                       value={formData.businessName}
-                      onChange={(e) => setFormData({...formData, businessName: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
                       required
                       style={{
                         width: '100%',
@@ -683,7 +676,7 @@ const PlumberMockupPage = () => {
                       type="text"
                       placeholder="e.g. Bristol"
                       value={formData.location}
-                      onChange={(e) => setFormData({...formData, location: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                       required
                       style={{
                         width: '100%',
@@ -714,7 +707,7 @@ const PlumberMockupPage = () => {
                       type="email"
                       placeholder="you@email.co.uk"
                       value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       required
                       style={{
                         width: '100%',
@@ -741,7 +734,7 @@ const PlumberMockupPage = () => {
                       type="tel"
                       placeholder="07123 456789"
                       value={formData.phone}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       style={{
                         width: '100%',
                         padding: '14px 16px',
@@ -769,7 +762,7 @@ const PlumberMockupPage = () => {
                   <textarea
                     placeholder="Colours you like, style preferences, anything you want us to know..."
                     value={formData.extras}
-                    onChange={(e) => setFormData({...formData, extras: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, extras: e.target.value })}
                     rows={3}
                     style={{
                       width: '100%',
@@ -861,7 +854,7 @@ const PlumberMockupPage = () => {
 
           <div>
             {faqs.map((faq, index) => (
-              <div 
+              <div
                 key={index}
                 style={{
                   borderBottom: index < faqs.length - 1 ? '1px solid #eee' : 'none'
