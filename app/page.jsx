@@ -457,7 +457,7 @@ const PlumberMockupPage = () => {
 
             <h1 style={{
               color: '#252525',
-              fontSize: 'clamp(32px, 5vw, 44px)',
+              fontSize: 'clamp(32px, 5vw, 54px)',
               fontWeight: '700',
               lineHeight: '1.15',
               marginBottom: '12px'
@@ -467,11 +467,11 @@ const PlumberMockupPage = () => {
 
             <p style={{
               color: '#EE2C7C',
-              fontSize: 'clamp(20px, 3vw, 26px)',
+              fontSize: 'clamp(24px, 4vw, 34px)',
               fontWeight: '600',
               marginBottom: '20px'
             }}>
-              Like it? We'll talk.
+              Like it? We'll build it.
             </p>
 
             <p style={{
