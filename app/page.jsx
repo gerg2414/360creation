@@ -115,13 +115,17 @@ const PlumberMockupPage = () => {
     setCurrentSlide((prev) => (prev - 1 + examples.length) % examples.length);
   };
 
-  // Auto-rotate every 5 seconds
+  // Hover state for pausing carousel
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Auto-rotate every 5 seconds (pause on hover or when modal open)
   useEffect(() => {
+    if (isHovered || modalOpen) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % examples.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [isHovered, modalOpen]);
 
   // Swipe handling
   const [touchStart, setTouchStart] = useState(null);
@@ -476,11 +480,30 @@ const PlumberMockupPage = () => {
           </div>
 
           {/* Right - Carousel */}
-          <div style={{ position: 'relative' }}>
-            <MockupCard
-              example={examples[currentSlide]}
-              onClick={() => setModalOpen(true)}
-            />
+          <div
+            style={{ position: 'relative' }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <div style={{
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div style={{
+                display: 'flex',
+                transition: 'transform 0.4s ease-in-out',
+                transform: `translateX(-${currentSlide * 100}%)`
+              }}>
+                {examples.map((example, index) => (
+                  <div key={index} style={{ minWidth: '100%' }}>
+                    <MockupCard
+                      example={example}
+                      onClick={() => setModalOpen(true)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
 
             {/* Carousel controls */}
             <div style={{
