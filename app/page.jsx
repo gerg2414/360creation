@@ -275,7 +275,8 @@ const PlumberMockupPage = () => {
           overflow: 'hidden',
           maxWidth: '800px',
           width: '100%',
-          cursor: 'default'
+          cursor: 'default',
+          position: 'relative'
         }}
       >
         {/* Browser bar */}
@@ -317,8 +318,8 @@ const PlumberMockupPage = () => {
           </button>
         </div>
 
-        {/* Full image */}
-        <div style={{ maxHeight: '80vh', overflow: 'auto' }}>
+        {/* Full image with scroll indicator */}
+        <div style={{ maxHeight: '70vh', overflow: 'auto', position: 'relative' }}>
           <img
             src={example.image}
             alt={`${example.business} website mockup`}
@@ -328,6 +329,38 @@ const PlumberMockupPage = () => {
               display: 'block'
             }}
           />
+
+          {/* Scroll indicator */}
+          <div style={{
+            position: 'sticky',
+            bottom: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            pointerEvents: 'none',
+            width: 'fit-content',
+            margin: '0 auto'
+          }}>
+            <div style={{
+              backgroundColor: 'rgba(0,0,0,0.7)',
+              padding: '10px 20px',
+              borderRadius: '50px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <span style={{ color: 'white', fontSize: '13px' }}>Scroll to see more</span>
+              <div style={{
+                animation: 'bounce 1.5s infinite',
+                color: 'white',
+                fontSize: '16px'
+              }}>
+                ↓
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Info bar */}
@@ -342,6 +375,20 @@ const PlumberMockupPage = () => {
           <div style={{ color: '#888', fontSize: '13px' }}>{example.location}</div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateY(6px);
+          }
+          60% {
+            transform: translateY(3px);
+          }
+        }
+      `}</style>
     </div>
   );
 
