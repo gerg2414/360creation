@@ -48,7 +48,9 @@ export default async function MockupPage({ params }) {
         justifyContent: 'space-between',
         alignItems: 'center',
         maxWidth: '1200px',
-        margin: '0 auto'
+        margin: '0 auto',
+        backgroundColor: 'white',
+        borderBottom: '1px solid #eee'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <img
