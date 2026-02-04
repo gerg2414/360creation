@@ -728,6 +728,50 @@ const TradeLandingPage = () => {
                 />
             )}
 
+            {/* Benefits strip */}
+            <section style={{
+                padding: '40px 24px',
+                backgroundColor: '#252525'
+            }}>
+                <div style={{
+                    maxWidth: '1200px',
+                    margin: '0 auto',
+                    textAlign: 'center'
+                }}>
+                    <p style={{
+                        color: 'white',
+                        fontSize: '16px',
+                        marginBottom: '20px',
+                        fontWeight: '500'
+                    }}>
+                        Our websites are designed with leads in mind
+                    </p>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '32px',
+                        flexWrap: 'wrap'
+                    }}>
+                        {[
+                            'Professional custom design',
+                            'Optimised to generate enquiries',
+                            'Mobile & desktop ready'
+                        ].map((benefit, index) => (
+                            <div key={index} style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                color: 'white',
+                                fontSize: '14px'
+                            }}>
+                                <span style={{ color: '#10B981' }}>✓</span>
+                                {benefit}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
             {/* How it works */}
             <section style={{
                 padding: '80px 24px',
