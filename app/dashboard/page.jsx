@@ -12,6 +12,8 @@ export default function Dashboard() {
   const [viewingLogo, setViewingLogo] = useState(null);
   const [viewMode, setViewMode] = useState('table'); // 'table', 'pipeline', or 'analytics'
   const [draggedItem, setDraggedItem] = useState(null);
+  const [analytics, setAnalytics] = useState(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -40,6 +42,32 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+
+  const fetchAnalytics = async () => {
+    setAnalyticsLoading(true);
+    try {
+      const response = await fetch('/api/analytics', {
+        headers: {
+          'Authorization': `Bearer ${password}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAnalytics(data);
+      }
+    } catch (error) {
+      console.error('Analytics error:', error);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
+
+  // Fetch analytics when switching to analytics view
+  useEffect(() => {
+    if (viewMode === 'analytics' && authenticated && !analytics) {
+      fetchAnalytics();
+    }
+  }, [viewMode, authenticated]);
 
   const updateStatus = async (id, status) => {
     try {
@@ -309,166 +337,252 @@ export default function Dashboard() {
         {/* Analytics View */}
         {viewMode === 'analytics' && (
           <div style={{ marginBottom: '32px' }}>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '24px'
-            }}>
-              {/* Leads by Source */}
-              <div style={{
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                padding: '24px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-              }}>
-                <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: '600', color: '#252525' }}>
-                  Leads by Source
-                </h3>
-                {(() => {
-                  const sources = submissions.reduce((acc, sub) => {
-                    const source = sub.utm_source || 'Direct / Organic';
-                    acc[source] = (acc[source] || 0) + 1;
-                    return acc;
-                  }, {});
-                  return Object.entries(sources).map(([source, count]) => (
-                    <div key={source} style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '12px 0',
-                      borderBottom: '1px solid #eee'
-                    }}>
-                      <span style={{ color: '#252525', fontSize: '14px' }}>{source}</span>
-                      <span style={{
-                        backgroundColor: '#EE2C7C',
-                        color: 'white',
-                        padding: '4px 12px',
-                        borderRadius: '20px',
-                        fontSize: '13px',
-                        fontWeight: '600'
-                      }}>{count}</span>
-                    </div>
-                  ));
-                })()}
-              </div>
-
-              {/* Leads by Campaign */}
-              <div style={{
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                padding: '24px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-              }}>
-                <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: '600', color: '#252525' }}>
-                  Leads by Campaign
-                </h3>
-                {(() => {
-                  const campaigns = submissions.reduce((acc, sub) => {
-                    const campaign = sub.utm_campaign || 'No Campaign';
-                    acc[campaign] = (acc[campaign] || 0) + 1;
-                    return acc;
-                  }, {});
-                  return Object.entries(campaigns).map(([campaign, count]) => (
-                    <div key={campaign} style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '12px 0',
-                      borderBottom: '1px solid #eee'
-                    }}>
-                      <span style={{ color: '#252525', fontSize: '14px' }}>{campaign}</span>
-                      <span style={{
-                        backgroundColor: '#3B82F6',
-                        color: 'white',
-                        padding: '4px 12px',
-                        borderRadius: '20px',
-                        fontSize: '13px',
-                        fontWeight: '600'
-                      }}>{count}</span>
-                    </div>
-                  ));
-                })()}
-              </div>
-
-              {/* Leads by Medium */}
-              <div style={{
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                padding: '24px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-              }}>
-                <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: '600', color: '#252525' }}>
-                  Leads by Medium
-                </h3>
-                {(() => {
-                  const mediums = submissions.reduce((acc, sub) => {
-                    const medium = sub.utm_medium || 'None';
-                    acc[medium] = (acc[medium] || 0) + 1;
-                    return acc;
-                  }, {});
-                  return Object.entries(mediums).map(([medium, count]) => (
-                    <div key={medium} style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      padding: '12px 0',
-                      borderBottom: '1px solid #eee'
-                    }}>
-                      <span style={{ color: '#252525', fontSize: '14px' }}>{medium}</span>
-                      <span style={{
-                        backgroundColor: '#10B981',
-                        color: 'white',
-                        padding: '4px 12px',
-                        borderRadius: '20px',
-                        fontSize: '13px',
-                        fontWeight: '600'
-                      }}>{count}</span>
-                    </div>
-                  ));
-                })()}
-              </div>
-
-              {/* Conversion Rate */}
-              <div style={{
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                padding: '24px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-              }}>
-                <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: '600', color: '#252525' }}>
-                  Conversion Funnel
-                </h3>
-                {[
-                  { label: 'Total Leads', count: submissions.length, color: '#252525' },
-                  { label: 'Mockup Sent', count: submissions.filter(s => ['mockup_sent', 'followed_up', 'converted'].includes(s.status)).length, color: '#3B82F6' },
-                  { label: 'Followed Up', count: submissions.filter(s => ['followed_up', 'converted'].includes(s.status)).length, color: '#8B5CF6' },
-                  { label: 'Converted', count: submissions.filter(s => s.status === 'converted').length, color: '#10B981' },
-                ].map((stage) => (
-                  <div key={stage.label} style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '12px 0',
-                    borderBottom: '1px solid #eee'
+            {analyticsLoading ? (
+              <div style={{ padding: '48px', textAlign: 'center', color: '#888' }}>Loading analytics...</div>
+            ) : (
+              <>
+                {/* Top Stats */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '32px'
+                }}>
+                  <div style={{
+                    backgroundColor: 'white',
+                    padding: '24px',
+                    borderRadius: '12px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
                   }}>
-                    <span style={{ color: '#252525', fontSize: '14px' }}>{stage.label}</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{
-                        backgroundColor: stage.color,
-                        color: 'white',
-                        padding: '4px 12px',
-                        borderRadius: '20px',
-                        fontSize: '13px',
-                        fontWeight: '600'
-                      }}>{stage.count}</span>
-                      <span style={{ color: '#888', fontSize: '12px' }}>
-                        {submissions.length > 0 ? Math.round((stage.count / submissions.length) * 100) : 0}%
-                      </span>
+                    <div style={{ color: '#888', fontSize: '14px', marginBottom: '8px' }}>Page Views (30d)</div>
+                    <div style={{ color: '#252525', fontSize: '32px', fontWeight: '700' }}>{analytics?.totalViews || 0}</div>
+                  </div>
+                  <div style={{
+                    backgroundColor: 'white',
+                    padding: '24px',
+                    borderRadius: '12px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                  }}>
+                    <div style={{ color: '#888', fontSize: '14px', marginBottom: '8px' }}>Unique Visitors (30d)</div>
+                    <div style={{ color: '#3B82F6', fontSize: '32px', fontWeight: '700' }}>{analytics?.uniqueVisitors || 0}</div>
+                  </div>
+                  <div style={{
+                    backgroundColor: 'white',
+                    padding: '24px',
+                    borderRadius: '12px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                  }}>
+                    <div style={{ color: '#888', fontSize: '14px', marginBottom: '8px' }}>Submissions (30d)</div>
+                    <div style={{ color: '#10B981', fontSize: '32px', fontWeight: '700' }}>{analytics?.totalSubmissions || 0}</div>
+                  </div>
+                  <div style={{
+                    backgroundColor: 'white',
+                    padding: '24px',
+                    borderRadius: '12px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                  }}>
+                    <div style={{ color: '#888', fontSize: '14px', marginBottom: '8px' }}>Conversion Rate</div>
+                    <div style={{ color: '#EE2C7C', fontSize: '32px', fontWeight: '700' }}>{analytics?.conversionRate || 0}%</div>
+                  </div>
+                </div>
+
+                {/* Charts Row */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '24px'
+                }}>
+                  {/* Views & Submissions Chart */}
+                  <div style={{
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                  }}>
+                    <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: '600', color: '#252525' }}>
+                      Last 7 Days
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {analytics?.viewsByDay && Object.entries(analytics.viewsByDay).map(([date, views]) => {
+                        const submissions = analytics.submissionsByDay?.[date] || 0;
+                        const maxVal = Math.max(...Object.values(analytics.viewsByDay), 1);
+                        return (
+                          <div key={date} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ width: '60px', fontSize: '12px', color: '#888' }}>
+                              {new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' })}
+                            </div>
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                              <div style={{
+                                height: '12px',
+                                backgroundColor: '#3B82F6',
+                                borderRadius: '2px',
+                                width: `${(views / maxVal) * 100}%`,
+                                minWidth: views > 0 ? '4px' : '0'
+                              }} />
+                              <div style={{
+                                height: '12px',
+                                backgroundColor: '#10B981',
+                                borderRadius: '2px',
+                                width: `${(submissions / maxVal) * 100}%`,
+                                minWidth: submissions > 0 ? '4px' : '0'
+                              }} />
+                            </div>
+                            <div style={{ width: '50px', fontSize: '12px', color: '#666', textAlign: 'right' }}>
+                              {views} / {submissions}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div style={{ display: 'flex', gap: '16px', marginTop: '16px', fontSize: '12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <div style={{ width: '12px', height: '12px', backgroundColor: '#3B82F6', borderRadius: '2px' }} />
+                        <span style={{ color: '#666' }}>Views</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <div style={{ width: '12px', height: '12px', backgroundColor: '#10B981', borderRadius: '2px' }} />
+                        <span style={{ color: '#666' }}>Submissions</span>
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
+
+                  {/* Views by Source */}
+                  <div style={{
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                      <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#252525' }}>
+                        Traffic Sources
+                      </h3>
+                      <button
+                        onClick={fetchAnalytics}
+                        style={{
+                          padding: '6px 12px',
+                          backgroundColor: '#f7f8f8',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          color: '#666'
+                        }}
+                      >
+                        Refresh
+                      </button>
+                    </div>
+                    {analytics?.viewsBySource && Object.entries(analytics.viewsBySource).length > 0 ? (
+                      Object.entries(analytics.viewsBySource).map(([source, count]) => (
+                        <div key={source} style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '12px 0',
+                          borderBottom: '1px solid #eee'
+                        }}>
+                          <span style={{ color: '#252525', fontSize: '14px' }}>{source}</span>
+                          <span style={{
+                            backgroundColor: '#EE2C7C',
+                            color: 'white',
+                            padding: '4px 12px',
+                            borderRadius: '20px',
+                            fontSize: '13px',
+                            fontWeight: '600'
+                          }}>{count}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div style={{ color: '#888', fontSize: '14px' }}>No data yet</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Bottom Row */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '24px'
+                }}>
+                  {/* Campaigns */}
+                  <div style={{
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                  }}>
+                    <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: '600', color: '#252525' }}>
+                      Campaigns
+                    </h3>
+                    {analytics?.viewsByCampaign && Object.entries(analytics.viewsByCampaign).length > 0 ? (
+                      Object.entries(analytics.viewsByCampaign).map(([campaign, count]) => (
+                        <div key={campaign} style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '12px 0',
+                          borderBottom: '1px solid #eee'
+                        }}>
+                          <span style={{ color: '#252525', fontSize: '14px' }}>{campaign}</span>
+                          <span style={{
+                            backgroundColor: '#3B82F6',
+                            color: 'white',
+                            padding: '4px 12px',
+                            borderRadius: '20px',
+                            fontSize: '13px',
+                            fontWeight: '600'
+                          }}>{count}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div style={{ color: '#888', fontSize: '14px' }}>No campaigns tracked yet</div>
+                    )}
+                  </div>
+
+                  {/* Conversion Funnel */}
+                  <div style={{
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                  }}>
+                    <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: '600', color: '#252525' }}>
+                      Conversion Funnel
+                    </h3>
+                    {[
+                      { label: 'Total Leads', count: submissions.length, color: '#252525' },
+                      { label: 'Mockup Sent', count: submissions.filter(s => ['mockup_sent', 'followed_up', 'converted'].includes(s.status)).length, color: '#3B82F6' },
+                      { label: 'Followed Up', count: submissions.filter(s => ['followed_up', 'converted'].includes(s.status)).length, color: '#8B5CF6' },
+                      { label: 'Converted', count: submissions.filter(s => s.status === 'converted').length, color: '#10B981' },
+                    ].map((stage) => (
+                      <div key={stage.label} style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '12px 0',
+                        borderBottom: '1px solid #eee'
+                      }}>
+                        <span style={{ color: '#252525', fontSize: '14px' }}>{stage.label}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{
+                            backgroundColor: stage.color,
+                            color: 'white',
+                            padding: '4px 12px',
+                            borderRadius: '20px',
+                            fontSize: '13px',
+                            fontWeight: '600'
+                          }}>{stage.count}</span>
+                          <span style={{ color: '#888', fontSize: '12px' }}>
+                            {submissions.length > 0 ? Math.round((stage.count / submissions.length) * 100) : 0}%
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
 

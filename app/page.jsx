@@ -18,6 +18,41 @@ const PlumberMockupPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
 
+  // Track page view on load
+  useEffect(() => {
+    const trackPageView = async () => {
+      // Get or create visitor ID
+      let visitorId = localStorage.getItem('visitor_id');
+      if (!visitorId) {
+        visitorId = 'v_' + Math.random().toString(36).substr(2, 9) + Date.now();
+        localStorage.setItem('visitor_id', visitorId);
+      }
+
+      // Get UTM params
+      const urlParams = new URLSearchParams(window.location.search);
+
+      try {
+        await fetch('/api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            visitorId,
+            page: window.location.pathname,
+            utmSource: urlParams.get('utm_source') || '',
+            utmMedium: urlParams.get('utm_medium') || '',
+            utmCampaign: urlParams.get('utm_campaign') || '',
+            referrer: document.referrer || '',
+            userAgent: navigator.userAgent || ''
+          })
+        });
+      } catch (error) {
+        console.error('Track error:', error);
+      }
+    };
+
+    trackPageView();
+  }, []);
+
   const examples = [
     {
       business: 'Mr. Rooter Plumbing',
