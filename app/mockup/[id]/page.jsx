@@ -62,10 +62,18 @@ export default async function MockupPage({ params }) {
             />
           </div>
           <a
-            href="https://threesixtycreation.co.uk"
-            style={{ color: '#666', textDecoration: 'none', fontSize: '14px' }}
+            href="#interest"
+            style={{
+              backgroundColor: '#EE2C7C',
+              color: 'white',
+              textDecoration: 'none',
+              fontSize: '14px',
+              padding: '12px 24px',
+              borderRadius: '50px',
+              fontWeight: '600'
+            }}
           >
-            threesixtycreation.co.uk
+            I want this
           </a>
         </div>
       </header>
@@ -115,70 +123,6 @@ export default async function MockupPage({ params }) {
 
       {/* Mockup Gallery */}
       <MockupGallery mockupUrls={mockupUrls} businessName={submission.business_name} submissionId={submission.id} firstName={submission.first_name} />
-
-      {/* CTA Section */}
-      <section style={{
-        padding: '80px 24px',
-        backgroundColor: '#252525',
-        textAlign: 'center'
-      }}>
-        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-          <h2 style={{
-            color: 'white',
-            fontSize: '32px',
-            fontWeight: '700',
-            marginBottom: '16px'
-          }}>
-            Love it? Let's make it real.
-          </h2>
-          <p style={{
-            color: '#888',
-            fontSize: '16px',
-            lineHeight: '1.6',
-            marginBottom: '32px'
-          }}>
-            This is just a preview. We can build you a fully functional website that looks exactly like this - and works beautifully too.
-          </p>
-          <div style={{
-            display: 'flex',
-            gap: '16px',
-            justifyContent: 'center',
-            flexWrap: 'wrap'
-          }}>
-            <a
-              href="https://threesixtycreation.co.uk/#contact"
-              style={{
-                display: 'inline-block',
-                padding: '18px 36px',
-                backgroundColor: '#EE2C7C',
-                color: 'white',
-                textDecoration: 'none',
-                borderRadius: '50px',
-                fontSize: '16px',
-                fontWeight: '600'
-              }}
-            >
-              Get in touch
-            </a>
-            <a
-              href="tel:01onal"
-              style={{
-                display: 'inline-block',
-                padding: '18px 36px',
-                backgroundColor: 'transparent',
-                color: 'white',
-                textDecoration: 'none',
-                borderRadius: '50px',
-                fontSize: '16px',
-                fontWeight: '600',
-                border: '2px solid #444'
-              }}
-            >
-              Call us
-            </a>
-          </div>
-        </div>
-      </section>
 
       {/* Footer */}
       <footer style={{

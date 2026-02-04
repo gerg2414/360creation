@@ -210,7 +210,7 @@ export default function MockupGallery({ mockupUrls, businessName, submissionId, 
             )}
 
             {/* Interest Section */}
-            <div style={{
+            <div id="interest" style={{
                 backgroundColor: 'white',
                 borderRadius: '16px',
                 padding: '40px',
@@ -226,7 +226,7 @@ export default function MockupGallery({ mockupUrls, businessName, submissionId, 
                             fontWeight: '700',
                             marginBottom: '24px'
                         }}>
-                            Interested in making this design a reality?
+                            Want to make this design a reality?
                         </h3>
                         <div style={{
                             display: 'flex',
