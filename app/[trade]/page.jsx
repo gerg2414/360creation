@@ -728,7 +728,7 @@ const TradeLandingPage = () => {
                         marginTop: '48px',
                         textAlign: 'center'
                     }}>
-                        {/* Desktop - all visible */}
+                        {/* Desktop - all 3 visible */}
                         <div className="benefits-desktop" style={{
                             display: 'flex',
                             justifyContent: 'center',
@@ -750,38 +750,25 @@ const TradeLandingPage = () => {
                                 </span>
                             ))}
                         </div>
-                        {/* Mobile - horizontal scroll */}
+                        {/* Mobile - only 2 */}
                         <div className="benefits-mobile" style={{
                             display: 'none',
-                            overflowX: 'auto',
-                            WebkitOverflowScrolling: 'touch',
-                            scrollbarWidth: 'none',
-                            msOverflowStyle: 'none',
-                            margin: '0 -24px',
-                            padding: '0 24px'
+                            justifyContent: 'center',
+                            gap: '20px'
                         }}>
-                            <div style={{
-                                display: 'flex',
-                                gap: '24px',
-                                paddingLeft: 'calc(50% - 140px)',
-                                paddingRight: '24px'
-                            }}>
-                                {[
-                                    'Professional custom design',
-                                    'Optimised to generate enquiries',
-                                    'Mobile & desktop ready'
-                                ].map((benefit, index) => (
-                                    <span key={index} style={{
-                                        color: '#666',
-                                        fontSize: '17px',
-                                        whiteSpace: 'nowrap',
-                                        flexShrink: 0
-                                    }}>
-                                        <span style={{ color: '#10B981', marginRight: '8px' }}>✓</span>
-                                        {benefit}
-                                    </span>
-                                ))}
-                            </div>
+                            {[
+                                'Optimised to generate enquiries',
+                                'Mobile & desktop ready'
+                            ].map((benefit, index) => (
+                                <span key={index} style={{
+                                    color: '#666',
+                                    fontSize: '14px',
+                                    whiteSpace: 'nowrap'
+                                }}>
+                                    <span style={{ color: '#10B981', marginRight: '6px' }}>✓</span>
+                                    {benefit}
+                                </span>
+                            ))}
                         </div>
                     </div>
                 </section>
@@ -1433,15 +1420,12 @@ const TradeLandingPage = () => {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
         }
-        .benefits-mobile::-webkit-scrollbar {
-          display: none;
-        }
         @media (max-width: 600px) {
           .benefits-desktop {
             display: none !important;
           }
           .benefits-mobile {
-            display: block !important;
+            display: flex !important;
           }
         }
       `}</style>
