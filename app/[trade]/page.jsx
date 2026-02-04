@@ -30,7 +30,6 @@ const TradeLandingPage = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [viewingCount, setViewingCount] = useState(11);
     const [currentReview, setCurrentReview] = useState(0);
-    const [currentBenefit, setCurrentBenefit] = useState(0);
 
     const reviews = [
         {
@@ -52,14 +51,6 @@ const TradeLandingPage = () => {
         const interval = setInterval(() => {
             setCurrentReview(prev => (prev + 1) % reviews.length);
         }, 6000);
-        return () => clearInterval(interval);
-    }, []);
-
-    // Auto-rotate benefits every 3 seconds (mobile)
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentBenefit(prev => (prev + 1) % 3);
-        }, 3000);
         return () => clearInterval(interval);
     }, []);
 
@@ -737,6 +728,7 @@ const TradeLandingPage = () => {
                         marginTop: '48px',
                         textAlign: 'center'
                     }}>
+                        {/* Desktop - all visible */}
                         <div className="benefits-desktop" style={{
                             display: 'flex',
                             justifyContent: 'center',
@@ -758,30 +750,36 @@ const TradeLandingPage = () => {
                                 </span>
                             ))}
                         </div>
-                        <div className="benefits-mobile" style={{ display: 'none' }}>
-                            <span style={{
-                                color: '#666',
-                                fontSize: '15px'
-                            }}>
-                                <span style={{ color: '#10B981', marginRight: '8px' }}>✓</span>
-                                {['Professional custom design', 'Optimised to generate enquiries', 'Mobile & desktop ready'][currentBenefit]}
-                            </span>
+                        {/* Mobile - horizontal scroll */}
+                        <div className="benefits-mobile" style={{
+                            display: 'none',
+                            overflowX: 'auto',
+                            WebkitOverflowScrolling: 'touch',
+                            scrollbarWidth: 'none',
+                            msOverflowStyle: 'none',
+                            margin: '0 -24px',
+                            padding: '0 24px'
+                        }}>
                             <div style={{
                                 display: 'flex',
-                                justifyContent: 'center',
-                                gap: '6px',
-                                marginTop: '12px'
+                                gap: '24px',
+                                paddingLeft: 'calc(50% - 140px)',
+                                paddingRight: '24px'
                             }}>
-                                {[0, 1, 2].map((i) => (
-                                    <div
-                                        key={i}
-                                        style={{
-                                            width: '6px',
-                                            height: '6px',
-                                            borderRadius: '50%',
-                                            backgroundColor: currentBenefit === i ? '#EE2C7C' : '#ddd'
-                                        }}
-                                    />
+                                {[
+                                    'Professional custom design',
+                                    'Optimised to generate enquiries',
+                                    'Mobile & desktop ready'
+                                ].map((benefit, index) => (
+                                    <span key={index} style={{
+                                        color: '#666',
+                                        fontSize: '17px',
+                                        whiteSpace: 'nowrap',
+                                        flexShrink: 0
+                                    }}>
+                                        <span style={{ color: '#10B981', marginRight: '8px' }}>✓</span>
+                                        {benefit}
+                                    </span>
                                 ))}
                             </div>
                         </div>
@@ -1434,6 +1432,9 @@ const TradeLandingPage = () => {
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
+        }
+        .benefits-mobile::-webkit-scrollbar {
+          display: none;
         }
         @media (max-width: 600px) {
           .benefits-desktop {
