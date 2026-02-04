@@ -720,16 +720,24 @@ const TradeLandingPage = () => {
                 </div>
 
                 {/* Benefits line */}
-                <p style={{
-                    textAlign: 'center',
-                    color: '#666',
-                    fontSize: '14px',
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: '40px',
+                    flexWrap: 'wrap',
                     marginTop: '48px'
                 }}>
-                    <span style={{ color: '#10B981' }}>✓</span> Professional custom design{' · '}
-                    <span style={{ color: '#10B981' }}>✓</span> Optimised to generate enquiries{' · '}
-                    <span style={{ color: '#10B981' }}>✓</span> Mobile & desktop ready
-                </p>
+                    {[
+                        'Professional custom design',
+                        'Optimised to generate enquiries',
+                        'Mobile & desktop ready'
+                    ].map((benefit, index) => (
+                        <span key={index} style={{ color: '#666', fontSize: '14px' }}>
+                            <span style={{ color: '#10B981', marginRight: '6px' }}>✓</span>
+                            {benefit}
+                        </span>
+                    ))}
+                </div>
             </section>
 
             {/* Modal */}
