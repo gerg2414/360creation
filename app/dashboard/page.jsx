@@ -185,13 +185,44 @@ export default function Dashboard() {
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
           <img
             src="/logo.png"
             alt="360 Creation"
             style={{ height: '32px', width: 'auto' }}
           />
-          <span style={{ fontWeight: '600', color: '#252525', fontSize: '16px' }}>Mockup Dashboard</span>
+          <nav style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={() => setViewMode('table')}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: viewMode === 'table' || viewMode === 'pipeline' ? '#FDF2F8' : 'transparent',
+                color: viewMode === 'table' || viewMode === 'pipeline' ? '#EE2C7C' : '#666',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}
+            >
+              Leads
+            </button>
+            <button
+              onClick={() => setViewMode('analytics')}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: viewMode === 'analytics' ? '#FDF2F8' : 'transparent',
+                color: viewMode === 'analytics' ? '#EE2C7C' : '#666',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}
+            >
+              Analytics
+            </button>
+          </nav>
         </div>
         <button
           onClick={() => {
@@ -221,9 +252,10 @@ export default function Dashboard() {
           marginBottom: '32px'
         }}>
           {[
-            { label: 'Total Requests', value: submissions.length, color: '#252525' },
+            { label: 'Total Leads', value: submissions.length, color: '#252525' },
             { label: 'New', value: submissions.filter(s => s.status === 'new').length, color: '#F59E0B' },
-            { label: 'Mockups Sent', value: submissions.filter(s => s.status === 'mockup_sent').length, color: '#10B981' },
+            { label: 'In Progress', value: submissions.filter(s => s.status === 'in_progress').length, color: '#3B82F6' },
+            { label: 'Mockups Sent', value: submissions.filter(s => ['mockup_sent', 'followed_up', 'converted'].includes(s.status)).length, color: '#10B981' },
             { label: 'Converted', value: submissions.filter(s => s.status === 'converted').length, color: '#EE2C7C' },
           ].map((stat, i) => (
             <div key={i} style={{
@@ -238,54 +270,41 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* View Toggle */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
-          <button
-            onClick={() => setViewMode('table')}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: viewMode === 'table' ? '#EE2C7C' : 'white',
-              color: viewMode === 'table' ? 'white' : '#666',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
-          >
-            Table View
-          </button>
-          <button
-            onClick={() => setViewMode('pipeline')}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: viewMode === 'pipeline' ? '#EE2C7C' : 'white',
-              color: viewMode === 'pipeline' ? 'white' : '#666',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
-          >
-            Pipeline View
-          </button>
-          <button
-            onClick={() => setViewMode('analytics')}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: viewMode === 'analytics' ? '#EE2C7C' : 'white',
-              color: viewMode === 'analytics' ? 'white' : '#666',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
-          >
-            Analytics
-          </button>
-        </div>
+        {/* View Toggle - only show for Leads */}
+        {(viewMode === 'table' || viewMode === 'pipeline') && (
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+            <button
+              onClick={() => setViewMode('table')}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: viewMode === 'table' ? '#EE2C7C' : 'white',
+                color: viewMode === 'table' ? 'white' : '#666',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}
+            >
+              Table View
+            </button>
+            <button
+              onClick={() => setViewMode('pipeline')}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: viewMode === 'pipeline' ? '#EE2C7C' : 'white',
+                color: viewMode === 'pipeline' ? 'white' : '#666',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}
+            >
+              Pipeline View
+            </button>
+          </div>
+        )}
 
         {/* Analytics View */}
         {viewMode === 'analytics' && (
@@ -517,7 +536,6 @@ export default function Dashboard() {
                         draggable
                         onDragStart={() => setDraggedItem(sub)}
                         onDragEnd={() => setDraggedItem(null)}
-                        onClick={() => setSelectedSubmission(sub)}
                         style={{
                           backgroundColor: draggedItem?.id === sub.id ? '#ddd' : '#f7f8f8',
                           borderRadius: '8px',
@@ -527,28 +545,51 @@ export default function Dashboard() {
                           opacity: draggedItem?.id === sub.id ? 0.5 : 1
                         }}
                       >
-                        <div style={{ fontWeight: '600', fontSize: '14px', color: '#252525', marginBottom: '4px' }}>
-                          {sub.first_name}
-                        </div>
-                        <div style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>
-                          {sub.business_name}
-                        </div>
-                        <div style={{ fontSize: '11px', color: '#aaa' }}>
-                          {sub.location}
-                        </div>
-                        {sub.utm_source && (
-                          <div style={{
-                            fontSize: '10px',
-                            color: '#3B82F6',
-                            marginTop: '6px',
-                            backgroundColor: '#EFF6FF',
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            display: 'inline-block'
-                          }}>
-                            {sub.utm_source}
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                          {sub.logo_url && (
+                            <img
+                              src={sub.logo_url}
+                              alt="Logo"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setViewingLogo(sub.logo_url);
+                              }}
+                              style={{
+                                width: '36px',
+                                height: '36px',
+                                objectFit: 'contain',
+                                borderRadius: '6px',
+                                backgroundColor: 'white',
+                                cursor: 'pointer',
+                                flexShrink: 0
+                              }}
+                            />
+                          )}
+                          <div style={{ flex: 1 }} onClick={() => setSelectedSubmission(sub)}>
+                            <div style={{ fontWeight: '600', fontSize: '14px', color: '#252525', marginBottom: '4px' }}>
+                              {sub.first_name}
+                            </div>
+                            <div style={{ fontSize: '12px', color: '#888', marginBottom: '4px' }}>
+                              {sub.business_name}
+                            </div>
+                            <div style={{ fontSize: '11px', color: '#aaa' }}>
+                              {sub.location}
+                            </div>
+                            {sub.utm_source && (
+                              <div style={{
+                                fontSize: '10px',
+                                color: '#3B82F6',
+                                marginTop: '6px',
+                                backgroundColor: '#EFF6FF',
+                                padding: '2px 6px',
+                                borderRadius: '4px',
+                                display: 'inline-block'
+                              }}>
+                                {sub.utm_source}
+                              </div>
+                            )}
                           </div>
-                        )}
+                        </div>
                       </div>
                     ))}
                 </div>
