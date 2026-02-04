@@ -224,10 +224,17 @@ export default function MockupGallery({ mockupUrls, businessName, submissionId, 
                             color: '#252525',
                             fontSize: '24px',
                             fontWeight: '700',
-                            marginBottom: '24px'
+                            marginBottom: '12px'
                         }}>
                             Want to make this design a reality?
                         </h3>
+                        <p style={{
+                            color: '#888',
+                            fontSize: '14px',
+                            marginBottom: '24px'
+                        }}>
+                            Don't worry, nothing is set in stone — we can make changes.
+                        </p>
                         <div style={{
                             display: 'flex',
                             gap: '16px',
@@ -296,7 +303,7 @@ export default function MockupGallery({ mockupUrls, businessName, submissionId, 
                             color: '#666',
                             fontSize: '16px'
                         }}>
-                            Keep an eye on your phone.
+                            Keep an eye on your email.
                         </p>
                     </>
                 ) : (
