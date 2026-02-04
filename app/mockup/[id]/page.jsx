@@ -43,39 +43,34 @@ export default async function MockupPage({ params }) {
     }}>
       {/* Header */}
       <header style={{
-        backgroundColor: 'white',
         padding: '20px 24px',
-        borderBottom: '1px solid #eee'
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        maxWidth: '1200px',
+        margin: '0 auto'
       }}>
-        <div style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <img
-              src="/logo.png"
-              alt="360 Creation"
-              style={{ height: '36px', width: 'auto' }}
-            />
-          </div>
-          <a
-            href="#interest"
-            style={{
-              backgroundColor: '#EE2C7C',
-              color: 'white',
-              textDecoration: 'none',
-              fontSize: '14px',
-              padding: '12px 24px',
-              borderRadius: '50px',
-              fontWeight: '600'
-            }}
-          >
-            I want this
-          </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img
+            src="/logo.png"
+            alt="360 Creation"
+            style={{ height: '36px', width: 'auto' }}
+          />
         </div>
+        <a
+          href="#interest"
+          style={{
+            backgroundColor: '#EE2C7C',
+            color: 'white',
+            textDecoration: 'none',
+            fontSize: '14px',
+            padding: '12px 24px',
+            borderRadius: '50px',
+            fontWeight: '600'
+          }}
+        >
+          I want this
+        </a>
       </header>
 
       {/* Hero */}
