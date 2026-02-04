@@ -2,8 +2,11 @@
 
 import { useState } from 'react'
 
-export default function MockupGallery({ mockupUrls, businessName }) {
+export default function MockupGallery({ mockupUrls, businessName, submissionId, firstName }) {
     const [currentIndex, setCurrentIndex] = useState(0)
+    const [responded, setResponded] = useState(false)
+    const [isInterested, setIsInterested] = useState(null)
+    const [loading, setLoading] = useState(false)
 
     const goToPrevious = () => {
         setCurrentIndex((prev) => (prev === 0 ? mockupUrls.length - 1 : prev - 1))
@@ -11,6 +14,23 @@ export default function MockupGallery({ mockupUrls, businessName }) {
 
     const goToNext = () => {
         setCurrentIndex((prev) => (prev === mockupUrls.length - 1 ? 0 : prev + 1))
+    }
+
+    const handleInterest = async (interested) => {
+        setLoading(true)
+        try {
+            await fetch('/api/interest', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ submissionId, interested })
+            })
+            setIsInterested(interested)
+            setResponded(true)
+        } catch (error) {
+            console.error('Error:', error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -78,17 +98,7 @@ export default function MockupGallery({ mockupUrls, businessName }) {
                         <div style={{ width: '12px', height: '12px', backgroundColor: '#ffbd2e', borderRadius: '50%' }} />
                         <div style={{ width: '12px', height: '12px', backgroundColor: '#28c940', borderRadius: '50%' }} />
                     </div>
-                    <div style={{
-                        flex: 1,
-                        backgroundColor: '#1a1a1a',
-                        borderRadius: '6px',
-                        padding: '8px 16px',
-                        fontSize: '13px',
-                        color: '#666',
-                        textAlign: 'center'
-                    }}>
-                        {businessName.toLowerCase().replace(/['\s.]/g, '')}.co.uk
-                    </div>
+                    <div style={{ flex: 1 }} />
                     {mockupUrls.length > 1 && (
                         <div style={{
                             backgroundColor: '#1a1a1a',
@@ -159,10 +169,10 @@ export default function MockupGallery({ mockupUrls, businessName }) {
                     )}
 
                     {/* Image */}
-                    <div style={{ maxHeight: '80vh', overflow: 'auto' }}>
+                    <div style={{ overflow: 'auto' }}>
                         <img
                             src={mockupUrls[currentIndex]}
-                            alt={`${businessName} website mockup ${currentIndex + 1}`}
+                            alt={`${businessName} website preview ${currentIndex + 1}`}
                             style={{
                                 width: '100%',
                                 height: 'auto',
@@ -198,6 +208,116 @@ export default function MockupGallery({ mockupUrls, businessName }) {
                     ))}
                 </div>
             )}
+
+            {/* Interest Section */}
+            <div style={{
+                backgroundColor: 'white',
+                borderRadius: '16px',
+                padding: '40px',
+                marginTop: '32px',
+                textAlign: 'center',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.06)'
+            }}>
+                {!responded ? (
+                    <>
+                        <h3 style={{
+                            color: '#252525',
+                            fontSize: '24px',
+                            fontWeight: '700',
+                            marginBottom: '24px'
+                        }}>
+                            Interested in making this design a reality?
+                        </h3>
+                        <div style={{
+                            display: 'flex',
+                            gap: '16px',
+                            justifyContent: 'center',
+                            flexWrap: 'wrap'
+                        }}>
+                            <button
+                                onClick={() => handleInterest(true)}
+                                disabled={loading}
+                                style={{
+                                    padding: '16px 48px',
+                                    backgroundColor: '#10B981',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '50px',
+                                    fontSize: '18px',
+                                    fontWeight: '600',
+                                    cursor: loading ? 'wait' : 'pointer',
+                                    opacity: loading ? 0.7 : 1
+                                }}
+                            >
+                                Yes
+                            </button>
+                            <button
+                                onClick={() => handleInterest(false)}
+                                disabled={loading}
+                                style={{
+                                    padding: '16px 48px',
+                                    backgroundColor: '#f7f8f8',
+                                    color: '#666',
+                                    border: 'none',
+                                    borderRadius: '50px',
+                                    fontSize: '18px',
+                                    fontWeight: '600',
+                                    cursor: loading ? 'wait' : 'pointer',
+                                    opacity: loading ? 0.7 : 1
+                                }}
+                            >
+                                No
+                            </button>
+                        </div>
+                    </>
+                ) : isInterested ? (
+                    <>
+                        <div style={{
+                            width: '64px',
+                            height: '64px',
+                            backgroundColor: '#10B981',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto 24px'
+                        }}>
+                            <span style={{ color: 'white', fontSize: '32px' }}>✓</span>
+                        </div>
+                        <h3 style={{
+                            color: '#252525',
+                            fontSize: '24px',
+                            fontWeight: '700',
+                            marginBottom: '12px'
+                        }}>
+                            Awesome {firstName}, we'll be in touch very soon!
+                        </h3>
+                        <p style={{
+                            color: '#666',
+                            fontSize: '16px'
+                        }}>
+                            Keep an eye on your phone.
+                        </p>
+                    </>
+                ) : (
+                    <>
+                        <h3 style={{
+                            color: '#252525',
+                            fontSize: '24px',
+                            fontWeight: '700',
+                            marginBottom: '12px'
+                        }}>
+                            No problem, thanks for looking!
+                        </h3>
+                        <p style={{
+                            color: '#666',
+                            fontSize: '16px'
+                        }}>
+                            If you change your mind, just reply to our email.
+                        </p>
+                    </>
+                )}
+            </div>
         </section>
     )
 }

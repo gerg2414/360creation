@@ -96,7 +96,7 @@ export default async function MockupPage({ params }) {
             fontWeight: '700',
             marginBottom: '12px'
           }}>
-            Your mockup is ready!
+            Your website preview is ready!
           </h1>
           <p style={{
             color: '#666',
@@ -114,7 +114,7 @@ export default async function MockupPage({ params }) {
       </section>
 
       {/* Mockup Gallery */}
-      <MockupGallery mockupUrls={mockupUrls} businessName={submission.business_name} />
+      <MockupGallery mockupUrls={mockupUrls} businessName={submission.business_name} submissionId={submission.id} firstName={submission.first_name} />
 
       {/* CTA Section */}
       <section style={{

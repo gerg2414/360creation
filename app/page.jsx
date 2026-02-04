@@ -117,15 +117,19 @@ const PlumberMockupPage = () => {
   const faqs = [
     {
       question: "Is this really free?",
-      answer: "Yes, completely free. No card details, no hidden fees. We design your mockup and send it over - that's it."
+      answer: "Yes, completely free. No card details, no hidden fees. We design your preview and send it over - that's it."
+    },
+    {
+      question: "What's the catch?",
+      answer: "There isn't one. If you love it, we can build it. If not, no hard feelings. We're betting you'll like what you see."
     },
     {
       question: "What exactly do I get?",
-      answer: "A custom mockup design showing what your website could look like. It's a visual design, not a working website."
+      answer: "A custom design showing what your website could look like. It's a visual preview, not a working website."
     },
     {
       question: "How long does it take?",
-      answer: "We'll have your mockup in your inbox within 24 hours."
+      answer: "We'll have your preview in your inbox within 48 hours."
     },
     {
       question: "What if I like it?",
@@ -507,7 +511,7 @@ const PlumberMockupPage = () => {
           borderRadius: '50px',
           fontWeight: '600'
         }}>
-          Get my free mockup
+          Get my free preview
         </a>
       </header>
 
@@ -546,7 +550,7 @@ const PlumberMockupPage = () => {
               lineHeight: '1.15',
               marginBottom: '12px'
             }}>
-              Your new plumber website mockup design, no cost.
+              Get a preview of your new plumbing website. No cost.
             </h1>
 
             <p style={{
@@ -565,7 +569,7 @@ const PlumberMockupPage = () => {
               marginBottom: '24px',
               maxWidth: '440px'
             }}>
-              We'll design a mockup of your website so you can see exactly what it'd look like. No obligation, no cost.
+              We'll design a preview of your website so you can see exactly what it'd look like. No obligation, 100% free.
             </p>
 
             {/* Social proof */}
@@ -587,7 +591,7 @@ const PlumberMockupPage = () => {
               }} />
               <span><strong style={{ color: '#252525' }}>{viewingCount} plumbers</strong> viewing</span>
               <span style={{ color: '#ccc' }}>·</span>
-              <span><strong style={{ color: '#252525' }}>47 mockups</strong> requested this month</span>
+              <span><strong style={{ color: '#252525' }}>47 designs</strong> previewed this month</span>
             </div>
 
             <a
@@ -603,7 +607,7 @@ const PlumberMockupPage = () => {
                 fontWeight: '600'
               }}
             >
-              Get my free mockup
+              Get my free preview
             </a>
           </div>
 
@@ -709,6 +713,94 @@ const PlumberMockupPage = () => {
           onClose={() => setModalOpen(false)}
         />
       )}
+
+      {/* How it works */}
+      <section style={{
+        padding: '80px 24px',
+        backgroundColor: '#f7f8f8'
+      }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <h2 style={{
+            color: '#252525',
+            fontSize: '32px',
+            fontWeight: '700',
+            textAlign: 'center',
+            marginBottom: '48px'
+          }}>
+            How it works
+          </h2>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '32px'
+          }}>
+            {[
+              {
+                step: '1',
+                title: 'Fill in the form',
+                description: 'Tell us your business name, location, and upload your logo if you have one. Takes 2 minutes.',
+                icon: '📝'
+              },
+              {
+                step: '2',
+                title: 'We design your preview',
+                description: 'Our team creates a custom website design for your plumbing business. Within 48 hours.',
+                icon: '🎨'
+              },
+              {
+                step: '3',
+                title: 'See what you think',
+                description: "You'll get an email with your preview. Love it? We'll chat. Not for you? No worries.",
+                icon: '✉️'
+              }
+            ].map((item, index) => (
+              <div key={index} style={{
+                backgroundColor: 'white',
+                borderRadius: '16px',
+                padding: '32px',
+                textAlign: 'center',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+              }}>
+                <div style={{
+                  fontSize: '40px',
+                  marginBottom: '16px'
+                }}>
+                  {item.icon}
+                </div>
+                <div style={{
+                  display: 'inline-block',
+                  backgroundColor: '#EE2C7C',
+                  color: 'white',
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  marginBottom: '16px'
+                }}>
+                  Step {item.step}
+                </div>
+                <h3 style={{
+                  color: '#252525',
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  marginBottom: '12px'
+                }}>
+                  {item.title}
+                </h3>
+                <p style={{
+                  color: '#666',
+                  fontSize: '15px',
+                  lineHeight: '1.6',
+                  margin: 0
+                }}>
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Reviews Section */}
       <section style={{
