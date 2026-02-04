@@ -717,19 +717,19 @@ const TradeLandingPage = () => {
                             </button>
                         </div>
                     </div>
-
-                    {/* Benefits line */}
-                    <p style={{
-                        textAlign: 'center',
-                        color: '#666',
-                        fontSize: '14px',
-                        marginTop: '32px'
-                    }}>
-                        <span style={{ color: '#10B981' }}>✓</span> Professional custom design{' · '}
-                        <span style={{ color: '#10B981' }}>✓</span> Optimised to generate enquiries{' · '}
-                        <span style={{ color: '#10B981' }}>✓</span> Mobile & desktop ready
-                    </p>
                 </div>
+
+                {/* Benefits line */}
+                <p style={{
+                    textAlign: 'center',
+                    color: '#666',
+                    fontSize: '14px',
+                    marginTop: '48px'
+                }}>
+                    <span style={{ color: '#10B981' }}>✓</span> Professional custom design{' · '}
+                    <span style={{ color: '#10B981' }}>✓</span> Optimised to generate enquiries{' · '}
+                    <span style={{ color: '#10B981' }}>✓</span> Mobile & desktop ready
+                </p>
             </section>
 
             {/* Modal */}
