@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [draggedItem, setDraggedItem] = useState(null);
   const [analytics, setAnalytics] = useState(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [liveVisitors, setLiveVisitors] = useState([]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -68,6 +69,32 @@ export default function Dashboard() {
       fetchAnalytics();
     }
   }, [viewMode, authenticated]);
+
+  const fetchLiveVisitors = async () => {
+    try {
+      const response = await fetch('/api/live-visitors', {
+        headers: {
+          'Authorization': `Bearer ${password}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setLiveVisitors(data.visitors || []);
+      }
+    } catch (error) {
+      console.error('Live visitors error:', error);
+    }
+  };
+
+  // Poll for live visitors every 10 seconds when authenticated
+  useEffect(() => {
+    if (!authenticated) return;
+
+    fetchLiveVisitors();
+    const interval = setInterval(fetchLiveVisitors, 10000);
+
+    return () => clearInterval(interval);
+  }, [authenticated, password]);
 
   const updateStatus = async (id, status) => {
     try {
@@ -297,6 +324,145 @@ export default function Dashboard() {
             </div>
           ))}
         </div>
+
+        {/* Live Visitors */}
+        {liveVisitors.length > 0 && (
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '24px',
+            marginBottom: '32px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <div style={{
+                width: '10px',
+                height: '10px',
+                backgroundColor: '#10B981',
+                borderRadius: '50%',
+                animation: 'pulse 2s infinite'
+              }} />
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#252525' }}>
+                {liveVisitors.length} Live Visitor{liveVisitors.length !== 1 ? 's' : ''}
+              </h3>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '24px' }}>
+              {/* UK Map */}
+              <div style={{ position: 'relative', minHeight: '300px' }}>
+                <svg viewBox="0 0 400 500" style={{ width: '100%', height: '300px' }}>
+                  {/* Simplified UK outline */}
+                  <path
+                    d="M200,20 L220,30 L240,25 L260,40 L280,35 L300,50 L310,70 L320,100 L315,130 L320,160 L310,190 L300,220 L290,250 L280,280 L270,300 L260,330 L250,350 L240,380 L220,400 L200,420 L180,430 L160,420 L140,400 L130,370 L120,340 L115,310 L110,280 L105,250 L100,220 L95,190 L100,160 L105,130 L110,100 L120,70 L140,50 L160,35 L180,25 Z"
+                    fill="#f0f0f0"
+                    stroke="#ddd"
+                    strokeWidth="2"
+                  />
+                  {/* Scotland */}
+                  <path
+                    d="M180,20 L200,15 L220,20 L240,30 L250,50 L245,80 L240,100 L220,110 L200,115 L180,110 L160,100 L155,80 L160,50 L170,30 Z"
+                    fill="#e8e8e8"
+                    stroke="#ddd"
+                    strokeWidth="1"
+                  />
+
+                  {/* Live visitor dots */}
+                  {liveVisitors.map((visitor, index) => {
+                    // Convert lat/lon to SVG coordinates (rough UK bounds)
+                    // UK roughly: lat 50-59, lon -8 to 2
+                    let x = 200, y = 250; // Default center
+                    if (visitor.lat && visitor.lon) {
+                      x = ((visitor.lon + 8) / 10) * 300 + 50;
+                      y = ((59 - visitor.lat) / 9) * 400 + 20;
+                    }
+                    return (
+                      <g key={visitor.visitor_id || index}>
+                        <circle
+                          cx={x}
+                          cy={y}
+                          r="20"
+                          fill="#EE2C7C"
+                          opacity="0.2"
+                        >
+                          <animate
+                            attributeName="r"
+                            values="8;20;8"
+                            dur="2s"
+                            repeatCount="indefinite"
+                          />
+                          <animate
+                            attributeName="opacity"
+                            values="0.4;0.1;0.4"
+                            dur="2s"
+                            repeatCount="indefinite"
+                          />
+                        </circle>
+                        <circle
+                          cx={x}
+                          cy={y}
+                          r="6"
+                          fill="#EE2C7C"
+                        />
+                      </g>
+                    );
+                  })}
+                </svg>
+              </div>
+
+              {/* Visitor List */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {liveVisitors.map((visitor, index) => (
+                  <div
+                    key={visitor.visitor_id || index}
+                    style={{
+                      backgroundColor: '#f7f8f8',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px'
+                    }}
+                  >
+                    <div style={{
+                      width: '8px',
+                      height: '8px',
+                      backgroundColor: '#10B981',
+                      borderRadius: '50%',
+                      flexShrink: 0
+                    }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#252525' }}>
+                        {visitor.city || 'Unknown'}{visitor.region ? `, ${visitor.region}` : ''}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {visitor.page || '/'}
+                        {visitor.utm_source && (
+                          <span style={{
+                            marginLeft: '8px',
+                            backgroundColor: '#EFF6FF',
+                            color: '#3B82F6',
+                            padding: '1px 6px',
+                            borderRadius: '4px',
+                            fontSize: '10px'
+                          }}>
+                            {visitor.utm_source}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <style>{`
+              @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.5; }
+              }
+            `}</style>
+          </div>
+        )}
 
         {/* View Toggle - only show for Leads */}
         {(viewMode === 'table' || viewMode === 'pipeline') && (
@@ -1010,8 +1176,13 @@ export default function Dashboard() {
                   <img
                     src={selectedSubmission.logo_url}
                     alt="Logo"
-                    style={{ display: 'block', maxWidth: '150px', marginTop: '8px', borderRadius: '6px' }}
+                    onClick={() => {
+                      setSelectedSubmission(null);
+                      setViewingLogo(selectedSubmission.logo_url);
+                    }}
+                    style={{ display: 'block', maxWidth: '150px', marginTop: '8px', borderRadius: '6px', cursor: 'pointer' }}
                   />
+                  <span style={{ fontSize: '11px', color: '#888', marginTop: '4px', display: 'block' }}>Click to view full size</span>
                 </div>
               )}
             </div>

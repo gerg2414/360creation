@@ -30,6 +30,7 @@ const PlumberMockupPage = () => {
 
       // Get UTM params
       const urlParams = new URLSearchParams(window.location.search);
+      const utmSource = urlParams.get('utm_source') || '';
 
       try {
         await fetch('/api/track', {
@@ -38,7 +39,7 @@ const PlumberMockupPage = () => {
           body: JSON.stringify({
             visitorId,
             page: window.location.pathname,
-            utmSource: urlParams.get('utm_source') || '',
+            utmSource: utmSource,
             utmMedium: urlParams.get('utm_medium') || '',
             utmCampaign: urlParams.get('utm_campaign') || '',
             referrer: document.referrer || '',
@@ -48,6 +49,30 @@ const PlumberMockupPage = () => {
       } catch (error) {
         console.error('Track error:', error);
       }
+
+      // Send initial heartbeat
+      const sendHeartbeat = async () => {
+        try {
+          await fetch('/api/heartbeat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              visitorId,
+              page: window.location.pathname,
+              utmSource: utmSource
+            })
+          });
+        } catch (error) {
+          console.error('Heartbeat error:', error);
+        }
+      };
+
+      sendHeartbeat();
+
+      // Send heartbeat every 30 seconds
+      const heartbeatInterval = setInterval(sendHeartbeat, 30000);
+
+      return () => clearInterval(heartbeatInterval);
     };
 
     trackPageView();
