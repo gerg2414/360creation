@@ -189,7 +189,13 @@ export default function GBPCheckPage() {
                                             'Free check, instant results'
                                         ].map((item, i) => (
                                             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                <span style={{ color: '#10B981' }}>✓</span>
+                                                <span style={{
+                                                    width: '8px',
+                                                    height: '8px',
+                                                    backgroundColor: '#EE2C7C',
+                                                    borderRadius: '50%',
+                                                    flexShrink: 0
+                                                }} />
                                                 <span style={{ color: '#555', fontSize: '15px' }}>{item}</span>
                                             </div>
                                         ))}
@@ -308,11 +314,11 @@ export default function GBPCheckPage() {
                                 borderTop: '1px solid #eee'
                             }}>
                                 {[
-                                    '✓ Trusted by 100+ UK tradespeople',
+                                    `✓ Trusted by 100+ UK ${trade.plural}`,
                                     '✓ 5.0 on Google',
                                     '✓ Local SEO experts'
                                 ].map((item, i) => (
-                                    <span key={i} style={{ color: '#666', fontSize: '14px' }}>{item}</span>
+                                    <span key={i} style={{ color: '#666', fontSize: '14px', margin: 0 }}>{item}</span>
                                 ))}
                             </div>
                         </>
