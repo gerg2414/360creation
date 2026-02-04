@@ -126,26 +126,7 @@ const TradeLandingPage = () => {
         trackPageView();
     }, []);
 
-    const examples = [
-        {
-            business: 'Mr. Rooter Plumbing',
-            location: 'Sussex',
-            color: '#C41230',
-            image: '/mockups/mr-rooter.png'
-        },
-        {
-            business: 'Wilson Mechanical',
-            location: 'Liverpool',
-            color: '#1B4B6B',
-            image: '/mockups/wilson-mechanical.png'
-        },
-        {
-            business: 'Parker Plumbing',
-            location: 'Bristol',
-            color: '#3BA4D9',
-            image: '/mockups/parker-plumbing.png'
-        },
-    ];
+    const examples = trade.examples;
 
     const faqs = [
         {
