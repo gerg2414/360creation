@@ -346,7 +346,7 @@ const TradeLandingPage = () => {
                     alignItems: 'center',
                     gap: '4px'
                 }}>
-                    Click to expand
+                    See full design
                 </div>
             </div>
         </div>
@@ -801,7 +801,7 @@ const TradeLandingPage = () => {
                                     boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
                                 }}>
                                     <div style={{
-                                        fontSize: '40px',
+                                        fontSize: '48px',
                                         marginBottom: '16px'
                                     }}>
                                         {item.icon}
@@ -843,7 +843,7 @@ const TradeLandingPage = () => {
                 {/* Reviews Section */}
                 <section style={{
                     padding: '80px 24px',
-                    backgroundColor: '#ffffff'
+                    backgroundColor: '#f7f8f8'
                 }}>
                     <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
                         <div style={{ marginBottom: '32px' }}>
@@ -934,6 +934,78 @@ const TradeLandingPage = () => {
                             >
                                 See all reviews on Google →
                             </a>
+                        </div>
+                    </div>
+                </section>
+
+                {/* FAQ */}
+                <section style={{
+                    padding: '80px 24px',
+                    backgroundColor: '#ffffff'
+                }}>
+                    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+                        <h2 style={{
+                            color: '#252525',
+                            fontSize: '28px',
+                            fontWeight: '700',
+                            marginBottom: '32px',
+                            textAlign: 'center'
+                        }}>
+                            Questions?
+                        </h2>
+
+                        <div>
+                            {faqs.map((faq, index) => (
+                                <div
+                                    key={index}
+                                    style={{
+                                        borderBottom: index < faqs.length - 1 ? '1px solid #eee' : 'none'
+                                    }}
+                                >
+                                    <button
+                                        onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                                        style={{
+                                            width: '100%',
+                                            padding: '20px 0',
+                                            backgroundColor: 'transparent',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            textAlign: 'left'
+                                        }}
+                                    >
+                                        <span style={{
+                                            color: '#252525',
+                                            fontSize: '16px',
+                                            fontWeight: '600'
+                                        }}>
+                                            {faq.question}
+                                        </span>
+                                        <span style={{
+                                            color: '#EE2C7C',
+                                            fontSize: '20px',
+                                            fontWeight: '300',
+                                            transform: openFaq === index ? 'rotate(45deg)' : 'none',
+                                            transition: 'transform 0.2s ease'
+                                        }}>
+                                            +
+                                        </span>
+                                    </button>
+                                    {openFaq === index && (
+                                        <p style={{
+                                            color: '#666',
+                                            fontSize: '15px',
+                                            lineHeight: '1.6',
+                                            paddingBottom: '20px',
+                                            margin: 0
+                                        }}>
+                                            {faq.answer}
+                                        </p>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </section>
@@ -1297,78 +1369,6 @@ const TradeLandingPage = () => {
                                 </p>
                             </div>
                         )}
-                    </div>
-                </section>
-
-                {/* FAQ */}
-                <section style={{
-                    padding: '80px 24px',
-                    backgroundColor: '#ffffff'
-                }}>
-                    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-                        <h2 style={{
-                            color: '#252525',
-                            fontSize: '28px',
-                            fontWeight: '700',
-                            marginBottom: '32px',
-                            textAlign: 'center'
-                        }}>
-                            Questions?
-                        </h2>
-
-                        <div>
-                            {faqs.map((faq, index) => (
-                                <div
-                                    key={index}
-                                    style={{
-                                        borderBottom: index < faqs.length - 1 ? '1px solid #eee' : 'none'
-                                    }}
-                                >
-                                    <button
-                                        onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                                        style={{
-                                            width: '100%',
-                                            padding: '20px 0',
-                                            backgroundColor: 'transparent',
-                                            border: 'none',
-                                            cursor: 'pointer',
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            textAlign: 'left'
-                                        }}
-                                    >
-                                        <span style={{
-                                            color: '#252525',
-                                            fontSize: '16px',
-                                            fontWeight: '600'
-                                        }}>
-                                            {faq.question}
-                                        </span>
-                                        <span style={{
-                                            color: '#EE2C7C',
-                                            fontSize: '20px',
-                                            fontWeight: '300',
-                                            transform: openFaq === index ? 'rotate(45deg)' : 'none',
-                                            transition: 'transform 0.2s ease'
-                                        }}>
-                                            +
-                                        </span>
-                                    </button>
-                                    {openFaq === index && (
-                                        <p style={{
-                                            color: '#666',
-                                            fontSize: '15px',
-                                            lineHeight: '1.6',
-                                            paddingBottom: '20px',
-                                            margin: 0
-                                        }}>
-                                            {faq.answer}
-                                        </p>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
                     </div>
                 </section>
 
