@@ -119,8 +119,8 @@ export default function Dashboard() {
     if (!selectedSubmission) return;
 
     const fileInput = e.target.querySelector('input[type="file"]');
-    if (!fileInput?.files[0]) {
-      alert('Please select a mockup image');
+    if (!fileInput?.files || fileInput.files.length === 0) {
+      alert('Please select at least one mockup image');
       return;
     }
 
@@ -128,7 +128,11 @@ export default function Dashboard() {
     try {
       const formData = new FormData();
       formData.append('submissionId', selectedSubmission.id);
-      formData.append('mockup', fileInput.files[0]);
+
+      // Append all selected files
+      for (let i = 0; i < fileInput.files.length; i++) {
+        formData.append('mockups', fileInput.files[i]);
+      }
 
       const response = await fetch('/api/upload-mockup', {
         method: 'POST',
@@ -139,7 +143,7 @@ export default function Dashboard() {
       });
 
       if (response.ok) {
-        alert('Mockup uploaded and customer notified!');
+        alert(`${fileInput.files.length} mockup(s) uploaded and customer notified!`);
         setSelectedSubmission(null);
         fetchSubmissions();
       } else {
@@ -349,83 +353,43 @@ export default function Dashboard() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '24px' }}>
               {/* UK Map */}
-              <div style={{ position: 'relative', minHeight: '400px' }}>
-                <svg viewBox="0 0 500 800" style={{ width: '100%', height: '400px' }}>
-                  {/* Great Britain - proper outline */}
-                  <path
-                    d="M280,720 L290,700 L285,680 L295,660 L290,640 L300,620 L295,600 L310,580 L320,560 L315,540 L330,520 L340,500 L335,480 L350,460 L360,440 L355,420 L340,400 L350,380 L345,360 L360,340 L370,320 L365,300 L380,280 L375,260 L390,240 L400,220 L395,200 L380,180 L370,160 L360,140 L340,130 L320,120 L300,115 L280,120 L260,130 L250,150 L240,170 L250,190 L240,210 L230,230 L220,210 L200,200 L180,210 L170,230 L180,250 L170,270 L160,290 L170,310 L160,330 L150,350 L140,370 L150,390 L145,410 L155,430 L150,450 L160,470 L155,490 L165,510 L160,530 L170,550 L175,570 L185,590 L180,610 L190,630 L200,650 L210,670 L220,690 L240,700 L260,710 Z"
-                    fill="#E5E7EB"
-                    stroke="#D1D5DB"
-                    strokeWidth="2"
-                  />
+              <div style={{ position: 'relative', minHeight: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg viewBox="0 0 200 310" style={{ width: '250px', height: '400px' }}>
+                  {/* Simplified but recognizable UK shape */}
                   {/* Scotland */}
-                  <path
-                    d="M260,130 L280,120 L300,115 L320,120 L340,130 L360,140 L370,160 L380,180 L370,200 L350,190 L340,170 L350,150 L340,140 L320,150 L300,160 L280,165 L260,160 L250,140 L240,120 L220,110 L200,100 L180,90 L170,70 L180,50 L200,40 L220,35 L240,40 L260,50 L280,45 L300,50 L310,70 L300,90 L280,100 L260,110 Z"
-                    fill="#D1D5DB"
-                    stroke="#D1D5DB"
-                    strokeWidth="1"
-                  />
-                  {/* Wales */}
-                  <path
-                    d="M160,470 L175,450 L165,430 L175,410 L170,390 L180,370 L175,350 L185,330 L180,310 L170,330 L155,350 L145,370 L150,390 L145,410 L155,430 L150,450 Z"
-                    fill="#D1D5DB"
-                    stroke="#D1D5DB"
-                    strokeWidth="1"
-                  />
+                  <path d="M95,8 L105,5 L118,8 L125,3 L135,10 L142,8 L148,15 L155,25 L148,35 L155,48 L150,58 L145,52 L138,60 L128,55 L122,65 L115,60 L105,65 L95,58 L88,65 L78,55 L82,42 L75,32 L80,22 L88,15 Z" fill="#D1D5DB" stroke="#9CA3AF" strokeWidth="0.5" />
+
+                  {/* England & Wales */}
+                  <path d="M122,65 L128,55 L138,60 L145,52 L150,58 L158,68 L162,82 L158,98 L165,115 L160,132 L168,150 L162,168 L155,185 L145,198 L135,210 L122,218 L108,222 L95,218 L85,205 L78,188 L82,170 L75,152 L80,135 L72,118 L78,100 L72,82 L78,68 L88,65 L95,58 L105,65 L115,60 Z" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="0.5" />
+
+                  {/* Wales bump */}
+                  <path d="M72,118 L80,135 L75,152 L82,170 L75,175 L65,165 L58,148 L62,130 L68,120 Z" fill="#D1D5DB" stroke="#9CA3AF" strokeWidth="0.5" />
+
+                  {/* Cornwall */}
+                  <path d="M78,188 L85,205 L78,215 L65,220 L52,212 L48,198 L55,188 L68,185 Z" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="0.5" />
+
                   {/* Northern Ireland */}
-                  <path
-                    d="M80,280 L100,260 L120,265 L140,260 L150,280 L145,300 L130,310 L110,305 L90,310 L75,300 Z"
-                    fill="#E5E7EB"
-                    stroke="#D1D5DB"
-                    strokeWidth="2"
-                  />
-                  {/* Ireland (Republic) - lighter */}
-                  <path
-                    d="M75,300 L90,310 L110,305 L120,320 L115,350 L120,380 L110,410 L100,440 L85,470 L70,490 L55,480 L45,450 L40,420 L45,390 L40,360 L50,330 L60,310 Z"
-                    fill="#F3F4F6"
-                    stroke="#D1D5DB"
-                    strokeWidth="2"
-                  />
+                  <path d="M25,78 L38,72 L52,75 L60,82 L55,92 L42,98 L28,95 L22,88 Z" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="0.5" />
+
+                  {/* Republic of Ireland - faded */}
+                  <path d="M22,88 L28,95 L42,98 L48,108 L42,125 L48,145 L38,165 L25,180 L12,175 L5,155 L2,130 L8,108 L15,92 Z" fill="#F3F4F6" stroke="#D1D5DB" strokeWidth="0.5" />
 
                   {/* Live visitor dots */}
                   {liveVisitors.map((visitor, index) => {
                     // Convert lat/lon to SVG coordinates
-                    // UK bounds: lat 49.9-60.9, lon -8.2 to 1.8
-                    let x = 250, y = 450; // Default to middle England
+                    // UK bounds approximately: lat 50-59, lon -10 to 2
+                    let x = 110, y = 150; // Default to middle England
                     if (visitor.lat && visitor.lon) {
-                      // Lon: -8.2 to 1.8 -> x: 50 to 450
-                      x = ((visitor.lon + 8.2) / 10) * 400 + 50;
-                      // Lat: 49.9 to 60.9 -> y: 750 to 50 (inverted)
-                      y = 750 - ((visitor.lat - 49.9) / 11) * 700;
+                      x = ((visitor.lon + 10) / 12) * 160 + 20;
+                      y = 250 - ((visitor.lat - 50) / 9) * 220;
                     }
                     return (
                       <g key={visitor.visitor_id || index}>
-                        <circle
-                          cx={x}
-                          cy={y}
-                          r="20"
-                          fill="#EE2C7C"
-                          opacity="0.2"
-                        >
-                          <animate
-                            attributeName="r"
-                            values="10;25;10"
-                            dur="2s"
-                            repeatCount="indefinite"
-                          />
-                          <animate
-                            attributeName="opacity"
-                            values="0.4;0.1;0.4"
-                            dur="2s"
-                            repeatCount="indefinite"
-                          />
+                        <circle cx={x} cy={y} r="12" fill="#EE2C7C" opacity="0.2">
+                          <animate attributeName="r" values="8;16;8" dur="2s" repeatCount="indefinite" />
+                          <animate attributeName="opacity" values="0.4;0.1;0.4" dur="2s" repeatCount="indefinite" />
                         </circle>
-                        <circle
-                          cx={x}
-                          cy={y}
-                          r="8"
-                          fill="#EE2C7C"
-                        />
+                        <circle cx={x} cy={y} r="5" fill="#EE2C7C" />
                       </g>
                     );
                   })}
@@ -1279,11 +1243,15 @@ export default function Dashboard() {
                   fontSize: '14px',
                   color: '#252525'
                 }}>
-                  Mockup Image
+                  Mockup Images
                 </label>
+                <p style={{ fontSize: '12px', color: '#888', marginBottom: '8px' }}>
+                  Upload multiple images (desktop, mobile, different pages)
+                </p>
                 <input
                   type="file"
                   accept="image/*"
+                  multiple
                   style={{
                     width: '100%',
                     padding: '12px',

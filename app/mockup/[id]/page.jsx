@@ -1,5 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
+import MockupGallery from './MockupGallery'
 
 async function getSubmission(id) {
   const { data, error } = await supabaseAdmin
@@ -15,7 +16,7 @@ async function getSubmission(id) {
   // Update viewed status
   await supabaseAdmin
     .from('submissions')
-    .update({ 
+    .update({
       viewed_at: data.viewed_at || new Date().toISOString(),
       updated_at: new Date().toISOString()
     })
@@ -30,6 +31,9 @@ export default async function MockupPage({ params }) {
   if (!submission || !submission.mockup_url) {
     notFound()
   }
+
+  // Get all mockup URLs (use array if exists, otherwise single URL)
+  const mockupUrls = submission.mockup_urls || [submission.mockup_url]
 
   return (
     <div style={{
@@ -51,21 +55,14 @@ export default async function MockupPage({ params }) {
           alignItems: 'center'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{
-              width: '36px',
-              height: '36px',
-              backgroundColor: '#EE2C7C',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <span style={{ color: 'white', fontWeight: 'bold', fontSize: '12px' }}>360</span>
-            </div>
-            <span style={{ fontWeight: '600', color: '#252525', fontSize: '15px' }}>Creation</span>
+            <img
+              src="/logo.png"
+              alt="360 Creation"
+              style={{ height: '32px', width: 'auto' }}
+            />
           </div>
-          <a 
-            href="https://threesixtycreation.co.uk" 
+          <a
+            href="https://threesixtycreation.co.uk"
             style={{ color: '#666', textDecoration: 'none', fontSize: '14px' }}
           >
             threesixtycreation.co.uk
@@ -108,61 +105,16 @@ export default async function MockupPage({ params }) {
           }}>
             Here's what your new <strong>{submission.business_name}</strong> website could look like.
           </p>
+          {mockupUrls.length > 1 && (
+            <p style={{ color: '#888', fontSize: '14px', marginTop: '12px' }}>
+              {mockupUrls.length} designs to explore
+            </p>
+          )}
         </div>
       </section>
 
-      {/* Mockup Display */}
-      <section style={{
-        padding: '48px 24px',
-        maxWidth: '1000px',
-        margin: '0 auto'
-      }}>
-        <div style={{
-          backgroundColor: '#1a1a1a',
-          borderRadius: '16px',
-          overflow: 'hidden',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.15)'
-        }}>
-          {/* Browser bar */}
-          <div style={{
-            backgroundColor: '#2d2d2d',
-            padding: '14px 20px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px'
-          }}>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <div style={{ width: '12px', height: '12px', backgroundColor: '#ff5f57', borderRadius: '50%' }} />
-              <div style={{ width: '12px', height: '12px', backgroundColor: '#ffbd2e', borderRadius: '50%' }} />
-              <div style={{ width: '12px', height: '12px', backgroundColor: '#28c940', borderRadius: '50%' }} />
-            </div>
-            <div style={{
-              flex: 1,
-              backgroundColor: '#1a1a1a',
-              borderRadius: '6px',
-              padding: '8px 16px',
-              fontSize: '13px',
-              color: '#666',
-              textAlign: 'center'
-            }}>
-              {submission.business_name.toLowerCase().replace(/['\s.]/g, '')}.co.uk
-            </div>
-          </div>
-          
-          {/* Mockup image */}
-          <div style={{ maxHeight: '80vh', overflow: 'auto' }}>
-            <img 
-              src={submission.mockup_url}
-              alt={`${submission.business_name} website mockup`}
-              style={{
-                width: '100%',
-                height: 'auto',
-                display: 'block'
-              }}
-            />
-          </div>
-        </div>
-      </section>
+      {/* Mockup Gallery */}
+      <MockupGallery mockupUrls={mockupUrls} businessName={submission.business_name} />
 
       {/* CTA Section */}
       <section style={{
