@@ -743,7 +743,7 @@ const PlumberMockupPage = () => {
         padding: '80px 24px',
         backgroundColor: '#f7f8f8'
       }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <h2 style={{
             color: '#252525',
             fontSize: '32px',
@@ -756,25 +756,25 @@ const PlumberMockupPage = () => {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: '32px'
           }}>
             {[
               {
                 step: '1',
                 title: 'Fill in the form',
-                description: 'Tell us your business name, location, and upload your logo if you have one. Takes 2 minutes.',
+                description: 'Tell us your business name, location, and upload your logo if you have one.',
                 icon: '📝'
               },
               {
                 step: '2',
-                title: 'We design your preview',
+                title: 'We design it',
                 description: 'Our team creates a custom website design for your plumbing business. Within 48 hours.',
                 icon: '🎨'
               },
               {
                 step: '3',
-                title: 'See what you think',
+                title: 'You decide',
                 description: "You'll get an email with your preview. Love it? We'll chat. Not for you? No worries.",
                 icon: '✉️'
               }
