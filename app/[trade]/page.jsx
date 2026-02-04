@@ -587,7 +587,7 @@ const TradeLandingPage = () => {
                                 marginBottom: '24px',
                                 maxWidth: '440px'
                             }}>
-                                We'll design a preview of your website so you can see exactly what it'd look like. No obligation, 100% free.
+                                We'll design a preview of your website so you can see exactly what it'd look like. Without any payment.
                             </p>
 
                             {/* Social proof */}
