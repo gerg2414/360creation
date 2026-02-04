@@ -47,6 +47,13 @@ export async function GET(request) {
             return acc
         }, {})
 
+        // Views by page
+        const viewsByPage = pageViews.reduce((acc, pv) => {
+            const page = pv.page || '/'
+            acc[page] = (acc[page] || 0) + 1
+            return acc
+        }, {})
+
         // Views by campaign
         const viewsByCampaign = pageViews.reduce((acc, pv) => {
             if (pv.utm_campaign) {
@@ -91,6 +98,7 @@ export async function GET(request) {
             totalSubmissions,
             conversionRate,
             viewsBySource,
+            viewsByPage,
             viewsByCampaign,
             viewsByDay,
             submissionsByDay

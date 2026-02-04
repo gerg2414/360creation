@@ -505,6 +505,41 @@ export default function Dashboard() {
                   gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
                   gap: '24px'
                 }}>
+                  {/* Page Views by Page */}
+                  <div style={{
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                  }}>
+                    <h3 style={{ margin: '0 0 20px', fontSize: '16px', fontWeight: '600', color: '#252525' }}>
+                      Views by Page
+                    </h3>
+                    {analytics?.viewsByPage && Object.entries(analytics.viewsByPage).length > 0 ? (
+                      Object.entries(analytics.viewsByPage).map(([page, count]) => (
+                        <div key={page} style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '12px 0',
+                          borderBottom: '1px solid #eee'
+                        }}>
+                          <span style={{ color: '#252525', fontSize: '14px' }}>{page || '/'}</span>
+                          <span style={{
+                            backgroundColor: '#8B5CF6',
+                            color: 'white',
+                            padding: '4px 12px',
+                            borderRadius: '20px',
+                            fontSize: '13px',
+                            fontWeight: '600'
+                          }}>{count}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div style={{ color: '#888', fontSize: '14px' }}>No data yet</div>
+                    )}
+                  </div>
+
                   {/* Campaigns */}
                   <div style={{
                     backgroundColor: 'white',
@@ -564,16 +599,18 @@ export default function Dashboard() {
                         borderBottom: '1px solid #eee'
                       }}>
                         <span style={{ color: '#252525', fontSize: '14px' }}>{stage.label}</span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '100px', justifyContent: 'flex-end' }}>
                           <span style={{
                             backgroundColor: stage.color,
                             color: 'white',
                             padding: '4px 12px',
                             borderRadius: '20px',
                             fontSize: '13px',
-                            fontWeight: '600'
+                            fontWeight: '600',
+                            minWidth: '32px',
+                            textAlign: 'center'
                           }}>{stage.count}</span>
-                          <span style={{ color: '#888', fontSize: '12px' }}>
+                          <span style={{ color: '#888', fontSize: '12px', minWidth: '40px', textAlign: 'right' }}>
                             {submissions.length > 0 ? Math.round((stage.count / submissions.length) * 100) : 0}%
                           </span>
                         </div>
