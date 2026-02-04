@@ -17,6 +17,15 @@ const PlumberMockupPage = () => {
   const [openFaq, setOpenFaq] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
+  const [viewingCount, setViewingCount] = useState(11);
+
+  // Fluctuate viewing count randomly
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setViewingCount(Math.floor(Math.random() * 8) + 8); // Random between 8-15
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Track page view on load
   useEffect(() => {
@@ -552,6 +561,28 @@ const PlumberMockupPage = () => {
             }}>
               We'll design a mockup of your website so you can see exactly what it'd look like. No obligation, no cost.
             </p>
+
+            {/* Social proof */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              marginBottom: '20px',
+              fontSize: '13px',
+              color: '#666'
+            }}>
+              <span style={{
+                display: 'inline-block',
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#10B981',
+                borderRadius: '50%',
+                animation: 'pulse 2s infinite'
+              }} />
+              <span><strong style={{ color: '#252525' }}>{viewingCount} plumbers</strong> viewing</span>
+              <span style={{ color: '#ccc' }}>·</span>
+              <span><strong style={{ color: '#252525' }}>47 mockups</strong> requested this month</span>
+            </div>
 
             <a
               href="#form"
@@ -1174,6 +1205,10 @@ const PlumberMockupPage = () => {
       <style>{`
         input:focus, textarea:focus {
           border-color: #EE2C7C !important;
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
         }
       `}</style>
     </div>
