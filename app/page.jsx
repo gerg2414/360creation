@@ -1317,7 +1317,7 @@ const PlumberMockupPage = () => {
         borderTop: '1px solid #eee'
       }}>
         <p style={{ color: '#999', fontSize: '13px', margin: 0 }}>
-          © 2025 360 Creation
+          © {new Date().getFullYear()} 360 Creation
         </p>
       </footer>
 

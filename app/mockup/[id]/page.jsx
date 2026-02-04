@@ -126,7 +126,7 @@ export default async function MockupPage({ params }) {
         backgroundColor: '#1a1a1a'
       }}>
         <p style={{ color: '#666', fontSize: '13px', margin: 0 }}>
-          © 2025 360 Creation. All rights reserved.
+          © {new Date().getFullYear()} 360 Creation. All rights reserved.
         </p>
       </footer>
     </div>
