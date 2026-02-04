@@ -27,96 +27,124 @@ const getEstimatedSearches = (location) => {
 
 // Estimate leads based on ranking position and reviews
 const estimateMonthlyLeads = (searchVolume, rating, reviewCount, position = 1) => {
-    // Top 3 get ~70% of clicks, #1 gets most
-    const positionMultiplier = position === 1 ? 0.35 : position === 2 ? 0.20 : 0.15
-
-    // More reviews = more trust = higher conversion
+    const positionMultiplier = position === 1 ? 0.35 : position === 2 ? 0.20 : position === 3 ? 0.15 : 0.05
     const reviewMultiplier = reviewCount > 100 ? 1.3 : reviewCount > 50 ? 1.15 : reviewCount > 20 ? 1.0 : 0.8
-
-    // Higher rating = better conversion
     const ratingMultiplier = rating >= 4.8 ? 1.2 : rating >= 4.5 ? 1.1 : rating >= 4.0 ? 1.0 : 0.85
 
     const baseLeads = searchVolume * positionMultiplier
     const adjustedLeads = baseLeads * reviewMultiplier * ratingMultiplier
 
-    // Convert to actual calls/enquiries (~10-15% of clicks become leads)
     return Math.floor(adjustedLeads * 0.12)
 }
 
 export async function POST(request) {
     try {
-        const { businessName, location, trade } = await request.json()
+        const { location, trade, placeId, action } = await request.json()
 
-        if (!businessName || !location) {
-            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
-        }
+        // Action 1: Get list of competitors
+        if (action === 'list' || !placeId) {
+            if (!location) {
+                return NextResponse.json({ error: 'Missing location' }, { status: 400 })
+            }
 
-        // Search for the business on Google Places
-        const searchQuery = encodeURIComponent(`${businessName} ${location}`)
+            const searchQuery = encodeURIComponent(`${trade || 'tradespeople'} in ${location}`)
 
-        const response = await fetch(
-            `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${searchQuery}&inputtype=textquery&fields=name,formatted_address,place_id,rating,user_ratings_total,business_status,photos&key=${GOOGLE_API_KEY}`
-        )
+            const response = await fetch(
+                `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${GOOGLE_API_KEY}`
+            )
 
-        const data = await response.json()
+            const data = await response.json()
 
-        console.log('Search query:', `${businessName} ${location}`)
-        console.log('Google response:', data)
+            if (data.status === 'OK' && data.results && data.results.length > 0) {
+                const competitors = data.results.slice(0, 10).map((place, index) => ({
+                    name: place.name,
+                    address: place.formatted_address,
+                    rating: place.rating || 0,
+                    reviewCount: place.user_ratings_total || 0,
+                    placeId: place.place_id,
+                    position: index + 1
+                }))
 
-        // Get estimated searches for this location
-        const estimatedSearches = getEstimatedSearches(location)
-        const searchVolume = Math.floor(Math.random() * (estimatedSearches.max - estimatedSearches.min) + estimatedSearches.min)
-
-        if (data.status === 'OK' && data.candidates && data.candidates.length > 0) {
-            const business = data.candidates[0]
-
-            const rating = business.rating || 0
-            const reviewCount = business.user_ratings_total || 0
-
-            // Estimate their monthly leads
-            const estimatedLeads = estimateMonthlyLeads(searchVolume, rating, reviewCount, 1)
-
-            // Calculate estimated revenue (avg job value for trade)
-            const avgJobValue = 250 // Conservative estimate
-            const estimatedRevenue = estimatedLeads * avgJobValue
-
-            // Generate "insights" about why they rank
-            const insights = []
-            if (reviewCount > 50) insights.push(`${reviewCount} reviews builds serious trust`)
-            if (reviewCount > 20 && reviewCount <= 50) insights.push(`${reviewCount} reviews - decent but beatable`)
-            if (reviewCount < 20) insights.push(`Only ${reviewCount} reviews - vulnerability here`)
-            if (rating >= 4.8) insights.push(`${rating} star rating - excellent reputation`)
-            if (rating >= 4.5 && rating < 4.8) insights.push(`${rating} star rating - strong but not perfect`)
-            if (rating < 4.5) insights.push(`${rating} star rating - room for you to beat them`)
-            insights.push('Likely has optimised business description')
-            insights.push('Probably posts regular updates')
+                return NextResponse.json({
+                    action: 'list',
+                    competitors,
+                    location
+                })
+            }
 
             return NextResponse.json({
-                found: true,
-                business: {
-                    name: business.name,
-                    address: business.formatted_address,
-                    rating: rating,
-                    reviewCount: reviewCount,
-                    placeId: business.place_id
-                },
-                stats: {
-                    searchVolume,
-                    estimatedLeads,
-                    estimatedRevenue,
-                    estimatedCallsPerWeek: Math.ceil(estimatedLeads / 4)
-                },
-                insights,
+                action: 'list',
+                competitors: [],
+                message: 'No businesses found in this area',
                 location
             })
         }
 
-        // Business not found
-        return NextResponse.json({
-            found: false,
-            message: "Couldn't find that business. Check the spelling or try a different name.",
-            location
-        })
+        // Action 2: Get details for specific competitor
+        if (action === 'details' && placeId) {
+            const estimatedSearches = getEstimatedSearches(location)
+            const searchVolume = Math.floor(Math.random() * (estimatedSearches.max - estimatedSearches.min) + estimatedSearches.min)
+
+            // Get place details
+            const response = await fetch(
+                `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_address,rating,user_ratings_total,reviews,opening_hours,website,formatted_phone_number&key=${GOOGLE_API_KEY}`
+            )
+
+            const data = await response.json()
+
+            if (data.status === 'OK' && data.result) {
+                const place = data.result
+                const rating = place.rating || 0
+                const reviewCount = place.user_ratings_total || 0
+                const position = 1 // Assume top position for estimates
+
+                const estimatedLeads = estimateMonthlyLeads(searchVolume, rating, reviewCount, position)
+                const avgJobValue = 250
+                const estimatedRevenue = estimatedLeads * avgJobValue
+
+                // Generate insights
+                const insights = []
+                if (reviewCount > 50) insights.push(`${reviewCount} reviews builds serious trust`)
+                if (reviewCount > 20 && reviewCount <= 50) insights.push(`${reviewCount} reviews - decent but beatable`)
+                if (reviewCount < 20) insights.push(`Only ${reviewCount} reviews - vulnerability here`)
+                if (rating >= 4.8) insights.push(`${rating} star rating - excellent reputation`)
+                if (rating >= 4.5 && rating < 4.8) insights.push(`${rating} star rating - strong but not perfect`)
+                if (rating < 4.5 && rating > 0) insights.push(`${rating} star rating - room for you to beat them`)
+                if (place.website) insights.push('Has a website linked')
+                if (place.opening_hours) insights.push('Has opening hours set')
+                insights.push('Likely has optimised business description')
+
+                return NextResponse.json({
+                    action: 'details',
+                    found: true,
+                    business: {
+                        name: place.name,
+                        address: place.formatted_address,
+                        rating: rating,
+                        reviewCount: reviewCount,
+                        placeId: placeId,
+                        website: place.website || null,
+                        phone: place.formatted_phone_number || null
+                    },
+                    stats: {
+                        searchVolume,
+                        estimatedLeads,
+                        estimatedRevenue,
+                        estimatedCallsPerWeek: Math.ceil(estimatedLeads / 4)
+                    },
+                    insights,
+                    location
+                })
+            }
+
+            return NextResponse.json({
+                action: 'details',
+                found: false,
+                message: "Couldn't get details for this business"
+            })
+        }
+
+        return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
 
     } catch (error) {
         console.error('Spy Search error:', error)

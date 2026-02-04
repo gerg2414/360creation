@@ -8,34 +8,77 @@ export default function GBPSpyPage() {
     const params = useParams()
     const trade = getTradeBySlug(params.trade) || getTradeBySlug('trade')
 
-    const [businessName, setBusinessName] = useState('')
     const [location, setLocation] = useState('')
     const [isSearching, setIsSearching] = useState(false)
     const [searchStep, setSearchStep] = useState(0)
+    const [competitors, setCompetitors] = useState(null)
+    const [selectedCompetitor, setSelectedCompetitor] = useState(null)
     const [results, setResults] = useState(null)
     const [email, setEmail] = useState('')
     const [showEmailCapture, setShowEmailCapture] = useState(false)
 
     const searchSteps = [
-        'Searching Google Business Profiles...',
-        'Analysing their ranking signals...',
+        `Searching for ${trade.plural} in ${location}...`,
+        'Finding top competitors...',
+        'Analysing Google rankings...'
+    ]
+
+    const detailSteps = [
+        'Analysing their profile...',
         'Calculating their lead flow...',
         'Generating competitor report...'
     ]
 
-    const handleSubmit = async (e) => {
+    // Step 1: Search for competitors in area
+    const handleSearch = async (e) => {
         e.preventDefault()
-        if (!businessName || !location) return
+        if (!location) return
 
         setIsSearching(true)
         setSearchStep(0)
+        setCompetitors(null)
         setResults(null)
 
         const stepInterval = setInterval(() => {
-            setSearchStep(prev => {
-                if (prev < searchSteps.length - 1) return prev + 1
-                return prev
+            setSearchStep(prev => prev < searchSteps.length - 1 ? prev + 1 : prev)
+        }, 800)
+
+        try {
+            const response = await fetch('/api/spy-search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    location,
+                    trade: trade.singular,
+                    action: 'list'
+                })
             })
+
+            const data = await response.json()
+
+            setTimeout(() => {
+                clearInterval(stepInterval)
+                setIsSearching(false)
+                if (data.competitors && data.competitors.length > 0) {
+                    setCompetitors(data.competitors)
+                }
+            }, 2500)
+
+        } catch (error) {
+            console.error('Error:', error)
+            clearInterval(stepInterval)
+            setIsSearching(false)
+        }
+    }
+
+    // Step 2: Get details for selected competitor
+    const handleSelectCompetitor = async (competitor) => {
+        setSelectedCompetitor(competitor)
+        setIsSearching(true)
+        setSearchStep(0)
+
+        const stepInterval = setInterval(() => {
+            setSearchStep(prev => prev < detailSteps.length - 1 ? prev + 1 : prev)
         }, 1000)
 
         try {
@@ -43,9 +86,10 @@ export default function GBPSpyPage() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    businessName,
                     location,
-                    trade: trade.singular
+                    trade: trade.singular,
+                    placeId: competitor.placeId,
+                    action: 'details'
                 })
             })
 
@@ -57,10 +101,8 @@ export default function GBPSpyPage() {
                 if (data.found) {
                     setShowEmailCapture(true)
                     setResults(data)
-                } else {
-                    setResults(data)
                 }
-            }, 4500)
+            }, 3500)
 
         } catch (error) {
             console.error('Error:', error)
@@ -71,25 +113,23 @@ export default function GBPSpyPage() {
 
     const handleEmailSubmit = (e) => {
         e.preventDefault()
-        // TODO: Save email to database
         setShowEmailCapture(false)
     }
 
     const resetSearch = () => {
         setResults(null)
-        setBusinessName('')
+        setCompetitors(null)
+        setSelectedCompetitor(null)
         setLocation('')
         setShowEmailCapture(false)
     }
+
+    const currentSteps = selectedCompetitor ? detailSteps : searchSteps
 
     return (
         <>
             <style>{`
         html { scroll-behavior: smooth; }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
@@ -102,16 +142,9 @@ export default function GBPSpyPage() {
           from { opacity: 0; transform: scale(0.5); }
           to { opacity: 1; transform: scale(1); }
         }
-        .fade-in {
-          animation: fadeIn 0.5s ease-out forwards;
-        }
-        .count-up {
-          animation: countUp 0.5s ease-out forwards;
-        }
-        input:focus {
-          border-color: #10B981 !important;
-          outline: none;
-        }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .count-up { animation: countUp 0.5s ease-out forwards; }
+        input:focus { border-color: #10B981 !important; outline: none; }
       `}</style>
 
             <div style={{
@@ -153,9 +186,9 @@ export default function GBPSpyPage() {
                     padding: '40px 24px 80px'
                 }}>
 
-                    {!isSearching && !results && (
+                    {/* Initial Form */}
+                    {!isSearching && !competitors && !results && (
                         <>
-                            {/* Hero - Split Layout */}
                             <div style={{
                                 display: 'grid',
                                 gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -163,7 +196,6 @@ export default function GBPSpyPage() {
                                 alignItems: 'center',
                                 marginBottom: '60px'
                             }}>
-                                {/* Left - Content */}
                                 <div>
                                     <p style={{
                                         display: 'inline-block',
@@ -186,7 +218,7 @@ export default function GBPSpyPage() {
                                         lineHeight: '1.2',
                                         marginBottom: '16px'
                                     }}>
-                                        How many leads is your competitor getting from Google?
+                                        How many leads are your competitors getting?
                                     </h1>
 
                                     <p style={{
@@ -195,26 +227,20 @@ export default function GBPSpyPage() {
                                         lineHeight: '1.6',
                                         marginBottom: '24px'
                                     }}>
-                                        Enter any {trade.singular} in your area. See how many leads they're getting and how they're doing it.
+                                        Enter your location to see the top {trade.plural} in your area. Pick any competitor to reveal their estimated leads and how they're doing it.
                                     </p>
 
-                                    <div style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: '12px'
-                                    }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                         {[
-                                            'See their Google rating & reviews',
+                                            'See who ranks top in your area',
                                             'Estimated leads they get per month',
-                                            'Why they rank higher than you'
+                                            'Discover how they\'re beating you'
                                         ].map((item, i) => (
                                             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                                 <span style={{
-                                                    width: '8px',
-                                                    height: '8px',
+                                                    width: '8px', height: '8px',
                                                     backgroundColor: '#10B981',
-                                                    borderRadius: '50%',
-                                                    flexShrink: 0
+                                                    borderRadius: '50%', flexShrink: 0
                                                 }} />
                                                 <span style={{ color: '#cbd5e1', fontSize: '15px' }}>{item}</span>
                                             </div>
@@ -222,7 +248,6 @@ export default function GBPSpyPage() {
                                     </div>
                                 </div>
 
-                                {/* Right - Form */}
                                 <div style={{
                                     backgroundColor: '#1e293b',
                                     borderRadius: '16px',
@@ -236,7 +261,7 @@ export default function GBPSpyPage() {
                                         marginBottom: '8px',
                                         textAlign: 'center'
                                     }}>
-                                        Spy on a competitor
+                                        Find your competitors
                                     </h2>
                                     <p style={{
                                         color: '#64748b',
@@ -244,39 +269,10 @@ export default function GBPSpyPage() {
                                         textAlign: 'center',
                                         marginBottom: '24px'
                                     }}>
-                                        Enter their business name to see their stats
+                                        Enter your town or city
                                     </p>
 
-                                    <form onSubmit={handleSubmit}>
-                                        <div style={{ marginBottom: '16px' }}>
-                                            <label style={{
-                                                display: 'block',
-                                                color: '#cbd5e1',
-                                                fontWeight: '600',
-                                                marginBottom: '8px',
-                                                fontSize: '14px'
-                                            }}>
-                                                Competitor's business name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                placeholder={`e.g. Smith's ${trade.title}`}
-                                                value={businessName}
-                                                onChange={(e) => setBusinessName(e.target.value)}
-                                                required
-                                                style={{
-                                                    width: '100%',
-                                                    padding: '14px 16px',
-                                                    border: '1px solid #334155',
-                                                    borderRadius: '8px',
-                                                    fontSize: '16px',
-                                                    backgroundColor: '#0f172a',
-                                                    color: 'white',
-                                                    boxSizing: 'border-box'
-                                                }}
-                                            />
-                                        </div>
-
+                                    <form onSubmit={handleSearch}>
                                         <div style={{ marginBottom: '24px' }}>
                                             <label style={{
                                                 display: 'block',
@@ -285,11 +281,11 @@ export default function GBPSpyPage() {
                                                 marginBottom: '8px',
                                                 fontSize: '14px'
                                             }}>
-                                                Their location
+                                                Your location
                                             </label>
                                             <input
                                                 type="text"
-                                                placeholder="e.g. Bristol"
+                                                placeholder="e.g. Bristol, Manchester, Leeds"
                                                 value={location}
                                                 onChange={(e) => setLocation(e.target.value)}
                                                 required
@@ -320,7 +316,7 @@ export default function GBPSpyPage() {
                                                 cursor: 'pointer'
                                             }}
                                         >
-                                            🔍 Reveal their stats
+                                            🔍 Find {trade.plural} in my area
                                         </button>
                                     </form>
 
@@ -334,31 +330,10 @@ export default function GBPSpyPage() {
                                     </p>
                                 </div>
                             </div>
-
-                            {/* How it works */}
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                                gap: '24px',
-                                paddingTop: '40px',
-                                borderTop: '1px solid #1e293b'
-                            }}>
-                                {[
-                                    { icon: '🔍', title: 'Search', desc: 'Enter any competitor' },
-                                    { icon: '📊', title: 'Analyse', desc: 'We pull their GBP data' },
-                                    { icon: '💡', title: 'Learn', desc: 'See why they rank' }
-                                ].map((item, i) => (
-                                    <div key={i} style={{ textAlign: 'center' }}>
-                                        <span style={{ fontSize: '32px' }}>{item.icon}</span>
-                                        <p style={{ color: 'white', fontWeight: '600', margin: '12px 0 4px' }}>{item.title}</p>
-                                        <p style={{ color: '#64748b', fontSize: '14px', margin: 0 }}>{item.desc}</p>
-                                    </div>
-                                ))}
-                            </div>
                         </>
                     )}
 
-                    {/* Searching Animation */}
+                    {/* Loading Animation */}
                     {isSearching && (
                         <div style={{ textAlign: 'center', padding: '80px 0' }}>
                             <div style={{
@@ -371,8 +346,8 @@ export default function GBPSpyPage() {
                                 animation: 'spin 1s linear infinite'
                             }} />
 
-                            <div style={{ minHeight: '120px' }}>
-                                {searchSteps.map((step, index) => (
+                            <div style={{ minHeight: '100px' }}>
+                                {currentSteps.map((step, index) => (
                                     <p
                                         key={index}
                                         className={index <= searchStep ? 'fade-in' : ''}
@@ -381,18 +356,110 @@ export default function GBPSpyPage() {
                                             fontSize: '16px',
                                             marginBottom: '12px',
                                             opacity: index <= searchStep ? 1 : 0,
-                                            fontWeight: index === searchStep ? '600' : '400',
-                                            transition: 'all 0.3s ease'
+                                            fontWeight: index === searchStep ? '600' : '400'
                                         }}
                                     >
                                         {index < searchStep ? '✓' : index === searchStep ? '●' : '○'} {step}
                                     </p>
                                 ))}
                             </div>
+                        </div>
+                    )}
 
-                            <p style={{ color: '#64748b', fontSize: '14px', marginTop: '32px' }}>
-                                Analysing <strong style={{ color: 'white' }}>{businessName}</strong> in <strong style={{ color: 'white' }}>{location}</strong>
-                            </p>
+                    {/* Competitor List */}
+                    {!isSearching && competitors && !results && (
+                        <div className="fade-in">
+                            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                                <h2 style={{ color: 'white', fontSize: '24px', fontWeight: '700', marginBottom: '8px' }}>
+                                    Top {trade.title} in {location}
+                                </h2>
+                                <p style={{ color: '#94a3b8', fontSize: '16px' }}>
+                                    Select a competitor to spy on their stats
+                                </p>
+                            </div>
+
+                            <div style={{
+                                display: 'grid',
+                                gap: '12px',
+                                maxWidth: '600px',
+                                margin: '0 auto'
+                            }}>
+                                {competitors.map((competitor, index) => (
+                                    <button
+                                        key={competitor.placeId}
+                                        onClick={() => handleSelectCompetitor(competitor)}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '16px',
+                                            padding: '16px 20px',
+                                            backgroundColor: '#1e293b',
+                                            border: '1px solid #334155',
+                                            borderRadius: '12px',
+                                            cursor: 'pointer',
+                                            textAlign: 'left',
+                                            width: '100%',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                        onMouseOver={(e) => {
+                                            e.currentTarget.style.borderColor = '#10B981'
+                                            e.currentTarget.style.backgroundColor = '#1e293b'
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.currentTarget.style.borderColor = '#334155'
+                                        }}
+                                    >
+                                        <span style={{
+                                            width: '32px',
+                                            height: '32px',
+                                            backgroundColor: index < 3 ? '#10B981' : '#334155',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '14px',
+                                            fontWeight: '700',
+                                            color: 'white',
+                                            flexShrink: 0
+                                        }}>
+                                            {index + 1}
+                                        </span>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <p style={{
+                                                color: 'white',
+                                                fontSize: '16px',
+                                                fontWeight: '600',
+                                                margin: 0,
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis'
+                                            }}>
+                                                {competitor.name}
+                                            </p>
+                                            <p style={{ color: '#64748b', fontSize: '13px', margin: '4px 0 0' }}>
+                                                ★ {competitor.rating} ({competitor.reviewCount} reviews)
+                                            </p>
+                                        </div>
+                                        <span style={{ color: '#10B981', fontSize: '20px' }}>→</span>
+                                    </button>
+                                ))}
+                            </div>
+
+                            <button
+                                onClick={resetSearch}
+                                style={{
+                                    display: 'block',
+                                    margin: '32px auto 0',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#64748b',
+                                    fontSize: '14px',
+                                    cursor: 'pointer',
+                                    textDecoration: 'underline'
+                                }}
+                            >
+                                Search different location
+                            </button>
                         </div>
                     )}
 
@@ -400,10 +467,7 @@ export default function GBPSpyPage() {
                     {showEmailCapture && results?.found && (
                         <div style={{
                             position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
+                            top: 0, left: 0, right: 0, bottom: 0,
                             backgroundColor: 'rgba(0,0,0,0.8)',
                             display: 'flex',
                             alignItems: 'center',
@@ -422,10 +486,10 @@ export default function GBPSpyPage() {
                                 <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                                     <span style={{ fontSize: '48px' }}>🎯</span>
                                     <h3 style={{ color: 'white', fontSize: '22px', fontWeight: '700', margin: '16px 0 8px' }}>
-                                        We found them!
+                                        Report ready!
                                     </h3>
                                     <p style={{ color: '#94a3b8', fontSize: '15px' }}>
-                                        Enter your email to see <strong style={{ color: 'white' }}>{results.business.name}'s</strong> full competitor report.
+                                        Enter your email to see <strong style={{ color: 'white' }}>{results.business.name}'s</strong> full stats.
                                     </p>
                                 </div>
 
@@ -473,10 +537,9 @@ export default function GBPSpyPage() {
                         </div>
                     )}
 
-                    {/* Results - Found */}
+                    {/* Results */}
                     {results && results.found && !showEmailCapture && (
                         <div className="fade-in">
-                            {/* Competitor Card */}
                             <div style={{
                                 backgroundColor: '#1e293b',
                                 borderRadius: '16px',
@@ -515,67 +578,33 @@ export default function GBPSpyPage() {
                                     </div>
                                 </div>
 
-                                {/* Stats Grid */}
                                 <div style={{
                                     display: 'grid',
                                     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
                                     gap: '16px'
                                 }}>
-                                    <div style={{
-                                        backgroundColor: '#0f172a',
-                                        borderRadius: '12px',
-                                        padding: '20px',
-                                        textAlign: 'center'
-                                    }}>
-                                        <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '8px' }}>Monthly Searches</p>
-                                        <p className="count-up" style={{ color: '#10B981', fontSize: '32px', fontWeight: '700', margin: 0 }}>
-                                            {results.stats.searchVolume.toLocaleString()}
-                                        </p>
-                                        <p style={{ color: '#64748b', fontSize: '12px', marginTop: '4px' }}>in {results.location}</p>
-                                    </div>
-
-                                    <div style={{
-                                        backgroundColor: '#0f172a',
-                                        borderRadius: '12px',
-                                        padding: '20px',
-                                        textAlign: 'center'
-                                    }}>
-                                        <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '8px' }}>Est. Leads/Month</p>
-                                        <p className="count-up" style={{ color: '#10B981', fontSize: '32px', fontWeight: '700', margin: 0 }}>
-                                            {results.stats.estimatedLeads}
-                                        </p>
-                                        <p style={{ color: '#64748b', fontSize: '12px', marginTop: '4px' }}>calls & enquiries</p>
-                                    </div>
-
-                                    <div style={{
-                                        backgroundColor: '#0f172a',
-                                        borderRadius: '12px',
-                                        padding: '20px',
-                                        textAlign: 'center'
-                                    }}>
-                                        <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '8px' }}>Est. Revenue</p>
-                                        <p className="count-up" style={{ color: '#10B981', fontSize: '32px', fontWeight: '700', margin: 0 }}>
-                                            £{results.stats.estimatedRevenue.toLocaleString()}
-                                        </p>
-                                        <p style={{ color: '#64748b', fontSize: '12px', marginTop: '4px' }}>per month from Google</p>
-                                    </div>
-
-                                    <div style={{
-                                        backgroundColor: '#0f172a',
-                                        borderRadius: '12px',
-                                        padding: '20px',
-                                        textAlign: 'center'
-                                    }}>
-                                        <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '8px' }}>Calls/Week</p>
-                                        <p className="count-up" style={{ color: '#10B981', fontSize: '32px', fontWeight: '700', margin: 0 }}>
-                                            {results.stats.estimatedCallsPerWeek}
-                                        </p>
-                                        <p style={{ color: '#64748b', fontSize: '12px', marginTop: '4px' }}>from this profile</p>
-                                    </div>
+                                    {[
+                                        { label: 'Monthly Searches', value: results.stats.searchVolume.toLocaleString(), sub: `in ${results.location}` },
+                                        { label: 'Est. Leads/Month', value: results.stats.estimatedLeads, sub: 'calls & enquiries' },
+                                        { label: 'Est. Revenue', value: `£${results.stats.estimatedRevenue.toLocaleString()}`, sub: 'per month from Google' },
+                                        { label: 'Calls/Week', value: results.stats.estimatedCallsPerWeek, sub: 'from this profile' }
+                                    ].map((stat, i) => (
+                                        <div key={i} style={{
+                                            backgroundColor: '#0f172a',
+                                            borderRadius: '12px',
+                                            padding: '20px',
+                                            textAlign: 'center'
+                                        }}>
+                                            <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '8px' }}>{stat.label}</p>
+                                            <p className="count-up" style={{ color: '#10B981', fontSize: '32px', fontWeight: '700', margin: 0 }}>
+                                                {stat.value}
+                                            </p>
+                                            <p style={{ color: '#64748b', fontSize: '12px', marginTop: '4px' }}>{stat.sub}</p>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
 
-                            {/* Why They Rank */}
                             <div style={{
                                 backgroundColor: '#1e293b',
                                 borderRadius: '16px',
@@ -596,7 +625,6 @@ export default function GBPSpyPage() {
                                 </div>
                             </div>
 
-                            {/* CTA */}
                             <div style={{
                                 background: 'linear-gradient(135deg, #10B981, #059669)',
                                 borderRadius: '16px',
@@ -604,23 +632,21 @@ export default function GBPSpyPage() {
                                 textAlign: 'center'
                             }}>
                                 <h3 style={{ color: 'white', fontSize: '22px', fontWeight: '700', marginBottom: '12px' }}>
-                                    Want to outrank them?
+                                    Want to outrank {results.business.name.split(' ')[0]}?
                                 </h3>
                                 <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '16px', marginBottom: '24px', maxWidth: '500px', margin: '0 auto 24px' }}>
-                                    Get our free guide: "The Local SEO Secrets Most {trade.title} Don't Know" — learn exactly how to beat competitors like {results.business.name}.
+                                    Get our free guide: "The Local SEO Secrets Most {trade.title} Don't Know" — learn exactly how to beat your competitors.
                                 </p>
-                                <button
-                                    style={{
-                                        padding: '16px 32px',
-                                        backgroundColor: 'white',
-                                        color: '#059669',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        fontSize: '16px',
-                                        fontWeight: '700',
-                                        cursor: 'pointer'
-                                    }}
-                                >
+                                <button style={{
+                                    padding: '16px 32px',
+                                    backgroundColor: 'white',
+                                    color: '#059669',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    fontSize: '16px',
+                                    fontWeight: '700',
+                                    cursor: 'pointer'
+                                }}>
                                     Get the free guide →
                                 </button>
                                 <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', marginTop: '12px' }}>
@@ -642,34 +668,6 @@ export default function GBPSpyPage() {
                                 }}
                             >
                                 Spy on another competitor
-                            </button>
-                        </div>
-                    )}
-
-                    {/* Results - Not Found */}
-                    {results && !results.found && (
-                        <div className="fade-in" style={{ textAlign: 'center', padding: '60px 0' }}>
-                            <span style={{ fontSize: '64px' }}>🤔</span>
-                            <h2 style={{ color: 'white', fontSize: '24px', fontWeight: '700', margin: '24px 0 12px' }}>
-                                Couldn't find that business
-                            </h2>
-                            <p style={{ color: '#94a3b8', fontSize: '16px', marginBottom: '32px' }}>
-                                {results.message}
-                            </p>
-                            <button
-                                onClick={resetSearch}
-                                style={{
-                                    padding: '16px 32px',
-                                    background: 'linear-gradient(135deg, #10B981, #059669)',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    fontSize: '16px',
-                                    fontWeight: '600',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                Try again
                             </button>
                         </div>
                     )}
