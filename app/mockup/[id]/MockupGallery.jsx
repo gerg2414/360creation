@@ -36,7 +36,7 @@ export default function MockupGallery({ mockupUrls, businessName, submissionId, 
     return (
         <section style={{
             padding: '48px 24px',
-            maxWidth: '1000px',
+            maxWidth: '1200px',
             margin: '0 auto'
         }}>
             {/* Thumbnails - only show if multiple images */}
@@ -233,7 +233,7 @@ export default function MockupGallery({ mockupUrls, businessName, submissionId, 
                             fontSize: '14px',
                             marginBottom: '24px'
                         }}>
-                            Don't worry, nothing is set in stone... we can make changes.
+                            Don't worry, nothing is set in stone — we can make changes.
                         </p>
                         <div style={{
                             display: 'flex',

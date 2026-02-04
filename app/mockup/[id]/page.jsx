@@ -48,7 +48,7 @@ export default async function MockupPage({ params }) {
         borderBottom: '1px solid #eee'
       }}>
         <div style={{
-          maxWidth: '1000px',
+          maxWidth: '1200px',
           margin: '0 auto',
           display: 'flex',
           justifyContent: 'space-between',
