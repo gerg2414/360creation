@@ -52,13 +52,16 @@ export async function POST(request) {
         }
 
         // Search for the business on Google Places
-        const searchQuery = encodeURIComponent(`${businessName} ${trade} ${location}`)
+        const searchQuery = encodeURIComponent(`${businessName} ${location}`)
 
         const response = await fetch(
             `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${searchQuery}&inputtype=textquery&fields=name,formatted_address,place_id,rating,user_ratings_total,business_status,photos&key=${GOOGLE_API_KEY}`
         )
 
         const data = await response.json()
+
+        console.log('Search query:', `${businessName} ${location}`)
+        console.log('Google response:', data)
 
         // Get estimated searches for this location
         const estimatedSearches = getEstimatedSearches(location)
