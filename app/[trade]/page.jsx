@@ -724,10 +724,10 @@ const TradeLandingPage = () => {
                     </div>
 
                     {/* Benefits line */}
-                    <div style={{
+                    <div className="benefits-line" style={{
                         display: 'flex',
                         justifyContent: 'center',
-                        gap: '40px',
+                        gap: '24px',
                         flexWrap: 'wrap',
                         marginTop: '48px'
                     }}>
@@ -736,7 +736,11 @@ const TradeLandingPage = () => {
                             'Optimised to generate enquiries',
                             'Mobile & desktop ready'
                         ].map((benefit, index) => (
-                            <span key={index} style={{ color: '#666', fontSize: '14px' }}>
+                            <span key={index} style={{
+                                color: '#666',
+                                fontSize: '14px',
+                                whiteSpace: 'nowrap'
+                            }}>
                                 <span style={{ color: '#10B981', marginRight: '6px' }}>✓</span>
                                 {benefit}
                             </span>
@@ -1390,6 +1394,13 @@ const TradeLandingPage = () => {
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
+        }
+        @media (max-width: 600px) {
+          .benefits-line {
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 12px !important;
+          }
         }
       `}</style>
             </div>
