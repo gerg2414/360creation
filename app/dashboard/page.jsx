@@ -325,8 +325,8 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Live Visitors */}
-        {liveVisitors.length > 0 && (
+        {/* Live Visitors - only show on analytics view */}
+        {viewMode === 'analytics' && liveVisitors.length > 0 && (
           <div style={{
             backgroundColor: 'white',
             borderRadius: '12px',
@@ -349,31 +349,54 @@ export default function Dashboard() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '24px' }}>
               {/* UK Map */}
-              <div style={{ position: 'relative', minHeight: '300px' }}>
-                <svg viewBox="0 0 400 500" style={{ width: '100%', height: '300px' }}>
-                  {/* Simplified UK outline */}
+              <div style={{ position: 'relative', minHeight: '400px' }}>
+                <svg viewBox="0 0 500 800" style={{ width: '100%', height: '400px' }}>
+                  {/* Great Britain - proper outline */}
                   <path
-                    d="M200,20 L220,30 L240,25 L260,40 L280,35 L300,50 L310,70 L320,100 L315,130 L320,160 L310,190 L300,220 L290,250 L280,280 L270,300 L260,330 L250,350 L240,380 L220,400 L200,420 L180,430 L160,420 L140,400 L130,370 L120,340 L115,310 L110,280 L105,250 L100,220 L95,190 L100,160 L105,130 L110,100 L120,70 L140,50 L160,35 L180,25 Z"
-                    fill="#f0f0f0"
-                    stroke="#ddd"
+                    d="M280,720 L290,700 L285,680 L295,660 L290,640 L300,620 L295,600 L310,580 L320,560 L315,540 L330,520 L340,500 L335,480 L350,460 L360,440 L355,420 L340,400 L350,380 L345,360 L360,340 L370,320 L365,300 L380,280 L375,260 L390,240 L400,220 L395,200 L380,180 L370,160 L360,140 L340,130 L320,120 L300,115 L280,120 L260,130 L250,150 L240,170 L250,190 L240,210 L230,230 L220,210 L200,200 L180,210 L170,230 L180,250 L170,270 L160,290 L170,310 L160,330 L150,350 L140,370 L150,390 L145,410 L155,430 L150,450 L160,470 L155,490 L165,510 L160,530 L170,550 L175,570 L185,590 L180,610 L190,630 L200,650 L210,670 L220,690 L240,700 L260,710 Z"
+                    fill="#E5E7EB"
+                    stroke="#D1D5DB"
                     strokeWidth="2"
                   />
                   {/* Scotland */}
                   <path
-                    d="M180,20 L200,15 L220,20 L240,30 L250,50 L245,80 L240,100 L220,110 L200,115 L180,110 L160,100 L155,80 L160,50 L170,30 Z"
-                    fill="#e8e8e8"
-                    stroke="#ddd"
+                    d="M260,130 L280,120 L300,115 L320,120 L340,130 L360,140 L370,160 L380,180 L370,200 L350,190 L340,170 L350,150 L340,140 L320,150 L300,160 L280,165 L260,160 L250,140 L240,120 L220,110 L200,100 L180,90 L170,70 L180,50 L200,40 L220,35 L240,40 L260,50 L280,45 L300,50 L310,70 L300,90 L280,100 L260,110 Z"
+                    fill="#D1D5DB"
+                    stroke="#D1D5DB"
                     strokeWidth="1"
+                  />
+                  {/* Wales */}
+                  <path
+                    d="M160,470 L175,450 L165,430 L175,410 L170,390 L180,370 L175,350 L185,330 L180,310 L170,330 L155,350 L145,370 L150,390 L145,410 L155,430 L150,450 Z"
+                    fill="#D1D5DB"
+                    stroke="#D1D5DB"
+                    strokeWidth="1"
+                  />
+                  {/* Northern Ireland */}
+                  <path
+                    d="M80,280 L100,260 L120,265 L140,260 L150,280 L145,300 L130,310 L110,305 L90,310 L75,300 Z"
+                    fill="#E5E7EB"
+                    stroke="#D1D5DB"
+                    strokeWidth="2"
+                  />
+                  {/* Ireland (Republic) - lighter */}
+                  <path
+                    d="M75,300 L90,310 L110,305 L120,320 L115,350 L120,380 L110,410 L100,440 L85,470 L70,490 L55,480 L45,450 L40,420 L45,390 L40,360 L50,330 L60,310 Z"
+                    fill="#F3F4F6"
+                    stroke="#D1D5DB"
+                    strokeWidth="2"
                   />
 
                   {/* Live visitor dots */}
                   {liveVisitors.map((visitor, index) => {
-                    // Convert lat/lon to SVG coordinates (rough UK bounds)
-                    // UK roughly: lat 50-59, lon -8 to 2
-                    let x = 200, y = 250; // Default center
+                    // Convert lat/lon to SVG coordinates
+                    // UK bounds: lat 49.9-60.9, lon -8.2 to 1.8
+                    let x = 250, y = 450; // Default to middle England
                     if (visitor.lat && visitor.lon) {
-                      x = ((visitor.lon + 8) / 10) * 300 + 50;
-                      y = ((59 - visitor.lat) / 9) * 400 + 20;
+                      // Lon: -8.2 to 1.8 -> x: 50 to 450
+                      x = ((visitor.lon + 8.2) / 10) * 400 + 50;
+                      // Lat: 49.9 to 60.9 -> y: 750 to 50 (inverted)
+                      y = 750 - ((visitor.lat - 49.9) / 11) * 700;
                     }
                     return (
                       <g key={visitor.visitor_id || index}>
@@ -386,7 +409,7 @@ export default function Dashboard() {
                         >
                           <animate
                             attributeName="r"
-                            values="8;20;8"
+                            values="10;25;10"
                             dur="2s"
                             repeatCount="indefinite"
                           />
@@ -400,7 +423,7 @@ export default function Dashboard() {
                         <circle
                           cx={x}
                           cy={y}
-                          r="6"
+                          r="8"
                           fill="#EE2C7C"
                         />
                       </g>
@@ -1160,15 +1183,75 @@ export default function Dashboard() {
               marginBottom: '24px'
             }}>
               <p style={{ margin: '0 0 8px', fontSize: '14px' }}>
+                <strong>Name:</strong> {selectedSubmission.first_name}
+              </p>
+              <p style={{ margin: '0 0 8px', fontSize: '14px' }}>
+                <strong>Business:</strong> {selectedSubmission.business_name}
+              </p>
+              <p style={{ margin: '0 0 8px', fontSize: '14px' }}>
                 <strong>Location:</strong> {selectedSubmission.location}
               </p>
               <p style={{ margin: '0 0 8px', fontSize: '14px' }}>
-                <strong>Email:</strong> {selectedSubmission.email}
+                <strong>Email:</strong> <a href={`mailto:${selectedSubmission.email}`} style={{ color: '#EE2C7C' }}>{selectedSubmission.email}</a>
               </p>
+              {selectedSubmission.phone && (
+                <p style={{ margin: '0 0 8px', fontSize: '14px' }}>
+                  <strong>Phone:</strong> <a href={`tel:${selectedSubmission.phone}`} style={{ color: '#EE2C7C' }}>{selectedSubmission.phone}</a>
+                </p>
+              )}
               {selectedSubmission.extras && (
-                <p style={{ margin: 0, fontSize: '14px' }}>
+                <p style={{ margin: '0 0 8px', fontSize: '14px' }}>
                   <strong>Notes:</strong> {selectedSubmission.extras}
                 </p>
+              )}
+              <p style={{ margin: '0 0 8px', fontSize: '14px' }}>
+                <strong>Submitted:</strong> {new Date(selectedSubmission.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+              </p>
+              {(selectedSubmission.utm_source || selectedSubmission.utm_campaign) && (
+                <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #ddd' }}>
+                  <p style={{ margin: '0 0 4px', fontSize: '12px', color: '#888', fontWeight: '600' }}>ATTRIBUTION</p>
+                  {selectedSubmission.utm_source && (
+                    <span style={{
+                      display: 'inline-block',
+                      backgroundColor: '#EFF6FF',
+                      color: '#3B82F6',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      marginRight: '6px',
+                      marginBottom: '6px'
+                    }}>
+                      {selectedSubmission.utm_source}
+                    </span>
+                  )}
+                  {selectedSubmission.utm_medium && (
+                    <span style={{
+                      display: 'inline-block',
+                      backgroundColor: '#F0FDF4',
+                      color: '#10B981',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      marginRight: '6px',
+                      marginBottom: '6px'
+                    }}>
+                      {selectedSubmission.utm_medium}
+                    </span>
+                  )}
+                  {selectedSubmission.utm_campaign && (
+                    <span style={{
+                      display: 'inline-block',
+                      backgroundColor: '#FDF4FF',
+                      color: '#A855F7',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      marginBottom: '6px'
+                    }}>
+                      {selectedSubmission.utm_campaign}
+                    </span>
+                  )}
+                </div>
               )}
               {selectedSubmission.logo_url && (
                 <div style={{ marginTop: '12px' }}>
