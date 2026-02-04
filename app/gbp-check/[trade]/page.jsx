@@ -129,159 +129,183 @@ export default function GBPCheckPage() {
 
                 {/* Main Content */}
                 <main style={{
-                    maxWidth: '800px',
+                    maxWidth: '1100px',
                     margin: '0 auto',
                     padding: '60px 24px 80px'
                 }}>
 
                     {!isSearching && !results && (
                         <>
-                            {/* Hero */}
-                            <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-                                <p style={{
-                                    display: 'inline-block',
-                                    backgroundColor: '#FEF3C7',
-                                    color: '#92400E',
-                                    fontSize: '13px',
-                                    fontWeight: '600',
-                                    padding: '8px 16px',
-                                    borderRadius: '50px',
-                                    marginBottom: '24px'
-                                }}>
-                                    ⚠️ 87% of customers search Google before calling
-                                </p>
-
-                                <h1 style={{
-                                    color: '#252525',
-                                    fontSize: 'clamp(28px, 5vw, 42px)',
-                                    fontWeight: '700',
-                                    lineHeight: '1.2',
-                                    marginBottom: '16px'
-                                }}>
-                                    When someone searches for a {trade.singular} in your area — do they find you?
-                                </h1>
-
-                                <p style={{
-                                    color: '#666',
-                                    fontSize: '18px',
-                                    lineHeight: '1.6',
-                                    maxWidth: '600px',
-                                    margin: '0 auto'
-                                }}>
-                                    Your competitors are getting calls right now from Google. Let's see if you're missing out.
-                                </p>
-                            </div>
-
-                            {/* Search Form */}
+                            {/* Hero - Split Layout */}
                             <div style={{
-                                backgroundColor: '#f7f8f8',
-                                borderRadius: '16px',
-                                padding: '32px',
-                                maxWidth: '500px',
-                                margin: '0 auto'
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                                gap: '48px',
+                                alignItems: 'center',
+                                marginBottom: '60px'
                             }}>
-                                <h2 style={{
-                                    color: '#252525',
-                                    fontSize: '20px',
-                                    fontWeight: '700',
-                                    marginBottom: '24px',
-                                    textAlign: 'center'
-                                }}>
-                                    Check your Google visibility
-                                </h2>
+                                {/* Left - Content */}
+                                <div>
+                                    <p style={{
+                                        display: 'inline-block',
+                                        backgroundColor: '#FEF3C7',
+                                        color: '#92400E',
+                                        fontSize: '13px',
+                                        fontWeight: '600',
+                                        padding: '8px 16px',
+                                        borderRadius: '50px',
+                                        marginBottom: '24px'
+                                    }}>
+                                        ⚠️ 87% of customers search Google first
+                                    </p>
 
-                                <form onSubmit={handleSubmit}>
-                                    <div style={{ marginBottom: '16px' }}>
-                                        <label style={{
-                                            display: 'block',
-                                            color: '#252525',
-                                            fontWeight: '600',
-                                            marginBottom: '8px',
-                                            fontSize: '14px'
-                                        }}>
-                                            Your business name
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder={`e.g. Smith's ${trade.title}`}
-                                            value={businessName}
-                                            onChange={(e) => setBusinessName(e.target.value)}
-                                            required
+                                    <h1 style={{
+                                        color: '#252525',
+                                        fontSize: 'clamp(28px, 4vw, 40px)',
+                                        fontWeight: '700',
+                                        lineHeight: '1.2',
+                                        marginBottom: '16px'
+                                    }}>
+                                        When someone searches for a {trade.singular} in your area — do they find you?
+                                    </h1>
+
+                                    <p style={{
+                                        color: '#666',
+                                        fontSize: '17px',
+                                        lineHeight: '1.6',
+                                        marginBottom: '24px'
+                                    }}>
+                                        Your competitors are getting calls right now from Google. Let's see if you're missing out.
+                                    </p>
+
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '12px'
+                                    }}>
+                                        {[
+                                            'The top 3 profiles get 70% of clicks',
+                                            'No profile = invisible to customers',
+                                            'Free check, instant results'
+                                        ].map((item, i) => (
+                                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                <span style={{ color: '#10B981' }}>✓</span>
+                                                <span style={{ color: '#555', fontSize: '15px' }}>{item}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Right - Form */}
+                                <div style={{
+                                    backgroundColor: '#f7f8f8',
+                                    borderRadius: '16px',
+                                    padding: '32px'
+                                }}>
+                                    <h2 style={{
+                                        color: '#252525',
+                                        fontSize: '20px',
+                                        fontWeight: '700',
+                                        marginBottom: '24px',
+                                        textAlign: 'center'
+                                    }}>
+                                        Check your Google visibility
+                                    </h2>
+
+                                    <form onSubmit={handleSubmit}>
+                                        <div style={{ marginBottom: '16px' }}>
+                                            <label style={{
+                                                display: 'block',
+                                                color: '#252525',
+                                                fontWeight: '600',
+                                                marginBottom: '8px',
+                                                fontSize: '14px'
+                                            }}>
+                                                Your business name
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder={`e.g. Smith's ${trade.title}`}
+                                                value={businessName}
+                                                onChange={(e) => setBusinessName(e.target.value)}
+                                                required
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '14px 16px',
+                                                    border: '1px solid #ddd',
+                                                    borderRadius: '8px',
+                                                    fontSize: '16px',
+                                                    backgroundColor: 'white',
+                                                    boxSizing: 'border-box'
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div style={{ marginBottom: '24px' }}>
+                                            <label style={{
+                                                display: 'block',
+                                                color: '#252525',
+                                                fontWeight: '600',
+                                                marginBottom: '8px',
+                                                fontSize: '14px'
+                                            }}>
+                                                Your location
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="e.g. Bristol"
+                                                value={location}
+                                                onChange={(e) => setLocation(e.target.value)}
+                                                required
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '14px 16px',
+                                                    border: '1px solid #ddd',
+                                                    borderRadius: '8px',
+                                                    fontSize: '16px',
+                                                    backgroundColor: 'white',
+                                                    boxSizing: 'border-box'
+                                                }}
+                                            />
+                                        </div>
+
+                                        <button
+                                            type="submit"
                                             style={{
                                                 width: '100%',
-                                                padding: '14px 16px',
-                                                border: '1px solid #ddd',
+                                                padding: '16px',
+                                                backgroundColor: '#EE2C7C',
+                                                color: 'white',
+                                                border: 'none',
                                                 borderRadius: '8px',
                                                 fontSize: '16px',
-                                                backgroundColor: 'white',
-                                                boxSizing: 'border-box'
+                                                fontWeight: '600',
+                                                cursor: 'pointer'
                                             }}
-                                        />
-                                    </div>
+                                        >
+                                            Check my visibility
+                                        </button>
+                                    </form>
 
-                                    <div style={{ marginBottom: '24px' }}>
-                                        <label style={{
-                                            display: 'block',
-                                            color: '#252525',
-                                            fontWeight: '600',
-                                            marginBottom: '8px',
-                                            fontSize: '14px'
-                                        }}>
-                                            Your location
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="e.g. Bristol"
-                                            value={location}
-                                            onChange={(e) => setLocation(e.target.value)}
-                                            required
-                                            style={{
-                                                width: '100%',
-                                                padding: '14px 16px',
-                                                border: '1px solid #ddd',
-                                                borderRadius: '8px',
-                                                fontSize: '16px',
-                                                backgroundColor: 'white',
-                                                boxSizing: 'border-box'
-                                            }}
-                                        />
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        style={{
-                                            width: '100%',
-                                            padding: '16px',
-                                            backgroundColor: '#EE2C7C',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '8px',
-                                            fontSize: '16px',
-                                            fontWeight: '600',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        Check my visibility
-                                    </button>
-                                </form>
-
-                                <p style={{
-                                    color: '#888',
-                                    fontSize: '12px',
-                                    textAlign: 'center',
-                                    marginTop: '16px'
-                                }}>
-                                    Free instant check • No signup required
-                                </p>
+                                    <p style={{
+                                        color: '#888',
+                                        fontSize: '12px',
+                                        textAlign: 'center',
+                                        marginTop: '16px'
+                                    }}>
+                                        Free instant check • No signup required
+                                    </p>
+                                </div>
                             </div>
 
-                            {/* Trust */}
+                            {/* Trust - below the fold */}
                             <div style={{
                                 display: 'flex',
                                 justifyContent: 'center',
                                 gap: '32px',
-                                marginTop: '48px',
-                                flexWrap: 'wrap'
+                                flexWrap: 'wrap',
+                                paddingTop: '32px',
+                                borderTop: '1px solid #eee'
                             }}>
                                 {[
                                     '✓ Trusted by 100+ UK tradespeople',
