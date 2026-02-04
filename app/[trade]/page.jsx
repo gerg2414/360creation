@@ -727,7 +727,7 @@ const TradeLandingPage = () => {
                     <div className="benefits-line" style={{
                         display: 'flex',
                         justifyContent: 'center',
-                        gap: '24px',
+                        gap: '12px',
                         flexWrap: 'wrap',
                         marginTop: '48px'
                     }}>
@@ -737,9 +737,13 @@ const TradeLandingPage = () => {
                             'Mobile & desktop ready'
                         ].map((benefit, index) => (
                             <span key={index} style={{
-                                color: '#666',
-                                fontSize: '14px',
-                                whiteSpace: 'nowrap'
+                                color: '#252525',
+                                fontSize: '13px',
+                                whiteSpace: 'nowrap',
+                                backgroundColor: '#f7f8f8',
+                                padding: '10px 16px',
+                                borderRadius: '50px',
+                                fontWeight: '500'
                             }}>
                                 <span style={{ color: '#10B981', marginRight: '6px' }}>✓</span>
                                 {benefit}
