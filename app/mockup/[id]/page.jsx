@@ -58,7 +58,7 @@ export default async function MockupPage({ params }) {
             <img
               src="/logo.png"
               alt="360 Creation"
-              style={{ height: '32px', width: 'auto' }}
+              style={{ height: '36px', width: 'auto' }}
             />
           </div>
           <a

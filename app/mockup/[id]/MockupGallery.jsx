@@ -36,7 +36,7 @@ export default function MockupGallery({ mockupUrls, businessName, submissionId, 
     return (
         <section style={{
             padding: '48px 24px',
-            maxWidth: '1200px',
+            maxWidth: '1000px',
             margin: '0 auto'
         }}>
             {/* Thumbnails - only show if multiple images */}
