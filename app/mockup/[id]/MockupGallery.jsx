@@ -233,7 +233,7 @@ export default function MockupGallery({ mockupUrls, businessName, submissionId, 
                             fontSize: '14px',
                             marginBottom: '24px'
                         }}>
-                            Don't worry, nothing is set in stone — we can make changes.
+                            Don't worry, nothing is set in stone... we can make changes.
                         </p>
                         <div style={{
                             display: 'flex',
