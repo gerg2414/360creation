@@ -19,11 +19,17 @@ const PlumberMockupPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [viewingCount, setViewingCount] = useState(11);
 
-  // Fluctuate viewing count randomly
+  // Fluctuate viewing count randomly - slower and smaller jumps
   useEffect(() => {
     const interval = setInterval(() => {
-      setViewingCount(Math.floor(Math.random() * 8) + 8); // Random between 8-15
-    }, 5000);
+      setViewingCount(prev => {
+        // Small change: -1, 0, or +1
+        const change = Math.floor(Math.random() * 3) - 1;
+        const newCount = prev + change;
+        // Keep between 8 and 15
+        return Math.max(8, Math.min(15, newCount));
+      });
+    }, 10000); // Every 10 seconds
     return () => clearInterval(interval);
   }, []);
 

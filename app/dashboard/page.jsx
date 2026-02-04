@@ -354,46 +354,69 @@ export default function Dashboard() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '24px' }}>
               {/* UK Map */}
               <div style={{ position: 'relative', minHeight: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg viewBox="0 0 200 310" style={{ width: '250px', height: '400px' }}>
-                  {/* Simplified but recognizable UK shape */}
-                  {/* Scotland */}
-                  <path d="M95,8 L105,5 L118,8 L125,3 L135,10 L142,8 L148,15 L155,25 L148,35 L155,48 L150,58 L145,52 L138,60 L128,55 L122,65 L115,60 L105,65 L95,58 L88,65 L78,55 L82,42 L75,32 L80,22 L88,15 Z" fill="#D1D5DB" stroke="#9CA3AF" strokeWidth="0.5" />
-
-                  {/* England & Wales */}
-                  <path d="M122,65 L128,55 L138,60 L145,52 L150,58 L158,68 L162,82 L158,98 L165,115 L160,132 L168,150 L162,168 L155,185 L145,198 L135,210 L122,218 L108,222 L95,218 L85,205 L78,188 L82,170 L75,152 L80,135 L72,118 L78,100 L72,82 L78,68 L88,65 L95,58 L105,65 L115,60 Z" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="0.5" />
-
-                  {/* Wales bump */}
-                  <path d="M72,118 L80,135 L75,152 L82,170 L75,175 L65,165 L58,148 L62,130 L68,120 Z" fill="#D1D5DB" stroke="#9CA3AF" strokeWidth="0.5" />
-
-                  {/* Cornwall */}
-                  <path d="M78,188 L85,205 L78,215 L65,220 L52,212 L48,198 L55,188 L68,185 Z" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="0.5" />
-
-                  {/* Northern Ireland */}
-                  <path d="M25,78 L38,72 L52,75 L60,82 L55,92 L42,98 L28,95 L22,88 Z" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="0.5" />
-
-                  {/* Republic of Ireland - faded */}
-                  <path d="M22,88 L28,95 L42,98 L48,108 L42,125 L48,145 L38,165 L25,180 L12,175 L5,155 L2,130 L8,108 L15,92 Z" fill="#F3F4F6" stroke="#D1D5DB" strokeWidth="0.5" />
-
-                  {/* Live visitor dots */}
+                {/* Use an image-based UK map */}
+                <div style={{ position: 'relative', width: '280px', height: '400px' }}>
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/d/d4/United_Kingdom_location_map.svg"
+                    alt="UK Map"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                      filter: 'grayscale(100%) brightness(1.1)',
+                      opacity: 0.6
+                    }}
+                  />
+                  {/* Overlay dots for live visitors */}
                   {liveVisitors.map((visitor, index) => {
-                    // Convert lat/lon to SVG coordinates
-                    // UK bounds approximately: lat 50-59, lon -10 to 2
-                    let x = 110, y = 150; // Default to middle England
+                    // Convert lat/lon to pixel position on the map image
+                    // UK bounds: lat 49.5-61, lon -11 to 2
+                    let left = '50%', top = '60%'; // Default to middle England
                     if (visitor.lat && visitor.lon) {
-                      x = ((visitor.lon + 10) / 12) * 160 + 20;
-                      y = 250 - ((visitor.lat - 50) / 9) * 220;
+                      const xPercent = ((visitor.lon + 11) / 13) * 100;
+                      const yPercent = ((61 - visitor.lat) / 11.5) * 100;
+                      left = `${xPercent}%`;
+                      top = `${yPercent}%`;
                     }
                     return (
-                      <g key={visitor.visitor_id || index}>
-                        <circle cx={x} cy={y} r="12" fill="#EE2C7C" opacity="0.2">
-                          <animate attributeName="r" values="8;16;8" dur="2s" repeatCount="indefinite" />
-                          <animate attributeName="opacity" values="0.4;0.1;0.4" dur="2s" repeatCount="indefinite" />
-                        </circle>
-                        <circle cx={x} cy={y} r="5" fill="#EE2C7C" />
-                      </g>
+                      <div
+                        key={visitor.visitor_id || index}
+                        style={{
+                          position: 'absolute',
+                          left: left,
+                          top: top,
+                          transform: 'translate(-50%, -50%)'
+                        }}
+                      >
+                        <div style={{
+                          width: '24px',
+                          height: '24px',
+                          backgroundColor: 'rgba(238, 44, 124, 0.2)',
+                          borderRadius: '50%',
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          animation: 'ping 2s infinite'
+                        }} />
+                        <div style={{
+                          width: '12px',
+                          height: '12px',
+                          backgroundColor: '#EE2C7C',
+                          borderRadius: '50%',
+                          position: 'relative',
+                          zIndex: 1
+                        }} />
+                      </div>
                     );
                   })}
-                </svg>
+                </div>
+                <style>{`
+                  @keyframes ping {
+                    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+                    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+                  }
+                `}</style>
               </div>
 
               {/* Visitor List */}
