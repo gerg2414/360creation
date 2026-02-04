@@ -347,127 +347,75 @@ export default function Dashboard() {
                 animation: 'pulse 2s infinite'
               }} />
               <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#252525' }}>
-                {liveVisitors.length} Live Visitor{liveVisitors.length !== 1 ? 's' : ''}
+                {liveVisitors.length} Live Visitor{liveVisitors.length !== 1 ? 's' : ''} Right Now
               </h3>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '24px' }}>
-              {/* UK Map */}
-              <div style={{ position: 'relative', minHeight: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {/* Use local UK map */}
-                <div style={{ position: 'relative', width: '280px', height: '400px' }}>
-                  <img
-                    src="/uk-map.svg"
-                    alt="UK Map"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'contain'
-                    }}
-                  />
-                  {/* Overlay dots for live visitors */}
-                  {liveVisitors.map((visitor, index) => {
-                    // Convert lat/lon to pixel position on the map
-                    // UK bounds: lat 50-59, lon -10.5 to 2
-                    let left = '55%', top = '65%'; // Default to middle England
-                    if (visitor.lat && visitor.lon) {
-                      const xPercent = ((visitor.lon + 10.5) / 12.5) * 70 + 15;
-                      const yPercent = ((59 - visitor.lat) / 9) * 70 + 5;
-                      left = `${xPercent}%`;
-                      top = `${yPercent}%`;
-                    }
-                    return (
-                      <div
-                        key={visitor.visitor_id || index}
-                        style={{
-                          position: 'absolute',
-                          left: left,
-                          top: top,
-                          transform: 'translate(-50%, -50%)'
-                        }}
-                      >
-                        <div style={{
-                          width: '24px',
-                          height: '24px',
-                          backgroundColor: 'rgba(238, 44, 124, 0.3)',
-                          borderRadius: '50%',
-                          position: 'absolute',
-                          top: '50%',
-                          left: '50%',
-                          transform: 'translate(-50%, -50%)',
-                          animation: 'ping 2s infinite'
-                        }} />
-                        <div style={{
-                          width: '12px',
-                          height: '12px',
-                          backgroundColor: '#EE2C7C',
-                          borderRadius: '50%',
-                          position: 'relative',
-                          zIndex: 1,
-                          boxShadow: '0 0 8px rgba(238, 44, 124, 0.5)'
-                        }} />
-                      </div>
-                    );
-                  })}
-                </div>
-                <style>{`
-                  @keyframes ping {
-                    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
-                    100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
-                  }
-                `}</style>
-              </div>
-
-              {/* Visitor List */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {liveVisitors.map((visitor, index) => (
-                  <div
-                    key={visitor.visitor_id || index}
-                    style={{
-                      backgroundColor: '#f7f8f8',
-                      borderRadius: '8px',
-                      padding: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px'
-                    }}
-                  >
-                    <div style={{
-                      width: '8px',
-                      height: '8px',
-                      backgroundColor: '#10B981',
-                      borderRadius: '50%',
-                      flexShrink: 0
-                    }} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#252525' }}>
-                        {visitor.city || 'Unknown'}{visitor.region ? `, ${visitor.region}` : ''}
-                      </div>
-                      <div style={{ fontSize: '12px', color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {visitor.page || '/'}
-                        {visitor.utm_source && (
-                          <span style={{
-                            marginLeft: '8px',
-                            backgroundColor: '#EFF6FF',
-                            color: '#3B82F6',
-                            padding: '1px 6px',
-                            borderRadius: '4px',
-                            fontSize: '10px'
-                          }}>
-                            {visitor.utm_source}
-                          </span>
-                        )}
-                      </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {liveVisitors.map((visitor, index) => (
+                <div
+                  key={visitor.visitor_id || index}
+                  style={{
+                    backgroundColor: '#f7f8f8',
+                    borderRadius: '10px',
+                    padding: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                    animation: 'slideIn 0.3s ease-out',
+                    animationDelay: `${index * 0.1}s`,
+                    animationFillMode: 'both'
+                  }}
+                >
+                  <div style={{
+                    width: '10px',
+                    height: '10px',
+                    backgroundColor: '#10B981',
+                    borderRadius: '50%',
+                    flexShrink: 0,
+                    animation: 'pulse 2s infinite'
+                  }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '15px', fontWeight: '600', color: '#252525', marginBottom: '4px' }}>
+                      {visitor.city || 'Unknown Location'}{visitor.region ? `, ${visitor.region}` : ''}
+                    </div>
+                    <div style={{ fontSize: '13px', color: '#888', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                      <span>📄 {visitor.page || '/'}</span>
+                      {visitor.utm_source && (
+                        <span style={{
+                          backgroundColor: '#EFF6FF',
+                          color: '#3B82F6',
+                          padding: '2px 8px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          fontWeight: '500'
+                        }}>
+                          via {visitor.utm_source}
+                        </span>
+                      )}
                     </div>
                   </div>
-                ))}
-              </div>
+                  <div style={{ fontSize: '12px', color: '#aaa' }}>
+                    {visitor.country || ''}
+                  </div>
+                </div>
+              ))}
             </div>
 
             <style>{`
               @keyframes pulse {
                 0%, 100% { opacity: 1; }
                 50% { opacity: 0.5; }
+              }
+              @keyframes slideIn {
+                from {
+                  opacity: 0;
+                  transform: translateY(-10px);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0);
+                }
               }
             `}</style>
           </div>
