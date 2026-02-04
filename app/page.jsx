@@ -18,6 +18,30 @@ const PlumberMockupPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [viewingCount, setViewingCount] = useState(11);
+  const [currentReview, setCurrentReview] = useState(0);
+
+  const reviews = [
+    {
+      name: 'Simon H.',
+      text: 'Excellent service, design and aftercare. Would highly recommend!',
+    },
+    {
+      name: 'Rich A.',
+      text: "First class service from start to finish. My requirements were not straightforward, but Greg dealt with it perfectly for me. Highly recommend.",
+    },
+    {
+      name: 'Ryan H.',
+      text: "Greg designed a website for me and I couldn't be happier with the work he's done. His knowledge and professionalism is great and he communicates very well.",
+    }
+  ];
+
+  // Auto-rotate reviews every 6 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentReview(prev => (prev + 1) % reviews.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Fluctuate viewing count randomly - slower and smaller jumps
   useEffect(() => {
@@ -807,27 +831,27 @@ const PlumberMockupPage = () => {
         padding: '80px 24px',
         backgroundColor: '#ffffff'
       }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-            <h2 style={{
-              color: '#252525',
-              fontSize: '32px',
-              fontWeight: '700',
-              marginBottom: '12px'
+        <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
+          <div style={{ marginBottom: '32px' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              marginBottom: '8px'
             }}>
-              What our customers say
-            </h2>
+              <div style={{ display: 'flex', gap: '2px' }}>
+                {[1, 2, 3, 4, 5].map(i => (
+                  <span key={i} style={{ color: '#FBBC04', fontSize: '24px' }}>★</span>
+                ))}
+              </div>
+            </div>
             <div style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '8px'
             }}>
-              <div style={{ display: 'flex', gap: '2px' }}>
-                {[1, 2, 3, 4, 5].map(i => (
-                  <span key={i} style={{ color: '#FBBC04', fontSize: '20px' }}>★</span>
-                ))}
-              </div>
               <span style={{ color: '#252525', fontSize: '15px', fontWeight: '600' }}>5.0</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style={{ width: '20px', height: '20px' }}>
                 <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
@@ -839,53 +863,50 @@ const PlumberMockupPage = () => {
             </div>
           </div>
 
+          {/* Single Review Display */}
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '24px',
-            marginBottom: '32px'
+            minHeight: '180px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center'
           }}>
-            {[
-              {
-                name: 'Simon H.',
-                text: 'Excellent service, design and aftercare. Would highly recommend!',
-              },
-              {
-                name: 'Rich A.',
-                text: "First class service from start to finish. My requirements were not straightforward, but Greg dealt with it perfectly for me. Highly recommend.",
-              },
-              {
-                name: 'Ryan H.',
-                text: "Greg designed a website for me and I couldn't be happier with the work he's done. His knowledge and professionalism is great and he communicates very well.",
-              }
-            ].map((review, index) => (
-              <div
+            <p style={{
+              color: '#252525',
+              fontSize: '22px',
+              lineHeight: '1.6',
+              marginBottom: '24px',
+              fontStyle: 'italic',
+              maxWidth: '600px'
+            }}>
+              "{reviews[currentReview].text}"
+            </p>
+            <div style={{ color: '#666', fontSize: '15px', fontWeight: '600' }}>
+              — {reviews[currentReview].name}
+            </div>
+          </div>
+
+          {/* Dots */}
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginTop: '32px' }}>
+            {reviews.map((_, index) => (
+              <button
                 key={index}
+                onClick={() => setCurrentReview(index)}
                 style={{
-                  backgroundColor: '#f7f8f8',
-                  borderRadius: '12px',
-                  padding: '28px',
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '50%',
+                  border: 'none',
+                  backgroundColor: currentReview === index ? '#EE2C7C' : '#ddd',
+                  cursor: 'pointer',
+                  padding: 0,
+                  transition: 'background-color 0.3s'
                 }}
-              >
-                <div style={{ display: 'flex', gap: '2px', marginBottom: '16px' }}>
-                  {[1, 2, 3, 4, 5].map(i => (
-                    <span key={i} style={{ color: '#FBBC04', fontSize: '16px' }}>★</span>
-                  ))}
-                </div>
-                <p style={{
-                  color: '#252525',
-                  fontSize: '15px',
-                  lineHeight: '1.6',
-                  marginBottom: '20px',
-                }}>
-                  "{review.text}"
-                </p>
-                <div style={{ color: '#252525', fontSize: '14px', fontWeight: '600' }}>{review.name}</div>
-              </div>
+              />
             ))}
           </div>
 
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ marginTop: '32px' }}>
             <a
               href="https://www.google.com/search?q=360+creation+monmouth"
               target="_blank"

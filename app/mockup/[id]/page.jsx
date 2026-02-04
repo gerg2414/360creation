@@ -38,7 +38,7 @@ export default async function MockupPage({ params }) {
   return (
     <div style={{
       minHeight: '100vh',
-      backgroundColor: '#f7f8f8',
+      backgroundColor: 'white',
       fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif"
     }}>
       {/* Header */}
@@ -48,9 +48,7 @@ export default async function MockupPage({ params }) {
         justifyContent: 'space-between',
         alignItems: 'center',
         maxWidth: '1200px',
-        margin: '0 auto',
-        backgroundColor: 'white',
-        borderBottom: '1px solid #eee'
+        margin: '0 auto'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <img
