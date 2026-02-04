@@ -195,7 +195,7 @@ export default function GBPSpyPage() {
                                         lineHeight: '1.6',
                                         marginBottom: '24px'
                                     }}>
-                                        Enter any {trade.singular} business in your area. See their reviews, estimated leads, and discover why they're ranking above you.
+                                        Enter any {trade.singular} in your area. See how many leads they're getting and how they're doing it.
                                     </p>
 
                                     <div style={{
