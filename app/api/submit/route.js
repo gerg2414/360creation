@@ -11,8 +11,8 @@ export async function POST(request) {
     const location = formData.get('location')
     const email = formData.get('email')
     const phone = formData.get('phone')
-    const extras = formData.get('extras')
     const trade = formData.get('trade') || 'plumber'
+    const needsLogoDesign = formData.get('needsLogoDesign') === 'yes'
     const logo = formData.get('logo')
     const utmSource = formData.get('utmSource') || null
     const utmMedium = formData.get('utmMedium') || null
@@ -50,8 +50,8 @@ export async function POST(request) {
         location: location,
         email: email,
         phone: phone || null,
-        extras: extras || null,
         trade: trade,
+        needs_logo_design: needsLogoDesign,
         logo_url: logoUrl,
         status: 'new',
         utm_source: utmSource,

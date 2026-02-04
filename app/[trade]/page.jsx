@@ -21,6 +21,8 @@ const TradeLandingPage = () => {
         extras: ''
     });
     const [logoPreview, setLogoPreview] = useState(null);
+    const [noLogo, setNoLogo] = useState(false);
+    const [needsLogoDesign, setNeedsLogoDesign] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [openFaq, setOpenFaq] = useState(null);
@@ -179,8 +181,8 @@ const TradeLandingPage = () => {
             formDataToSend.append('location', formData.location);
             formDataToSend.append('email', formData.email);
             formDataToSend.append('phone', formData.phone);
-            formDataToSend.append('extras', formData.extras);
             formDataToSend.append('trade', trade.slug);
+            formDataToSend.append('needsLogoDesign', needsLogoDesign === true ? 'yes' : 'no');
             formDataToSend.append('utmSource', utmSource);
             formDataToSend.append('utmMedium', utmMedium);
             formDataToSend.append('utmCampaign', utmCampaign);
@@ -979,43 +981,121 @@ const TradeLandingPage = () => {
                                         }}>
                                             Your logo
                                         </label>
-                                        <div style={{
-                                            border: '2px dashed #ddd',
-                                            borderRadius: '8px',
-                                            padding: '28px',
-                                            textAlign: 'center',
-                                            cursor: 'pointer',
-                                            position: 'relative'
-                                        }}>
-                                            {logoPreview ? (
-                                                <div>
-                                                    <img
-                                                        src={logoPreview}
-                                                        alt="Logo"
-                                                        style={{ maxWidth: '120px', maxHeight: '70px' }}
+
+                                        {!noLogo ? (
+                                            <>
+                                                <div style={{
+                                                    border: '2px dashed #ddd',
+                                                    borderRadius: '8px',
+                                                    padding: '28px',
+                                                    textAlign: 'center',
+                                                    cursor: 'pointer',
+                                                    position: 'relative'
+                                                }}>
+                                                    {logoPreview ? (
+                                                        <div>
+                                                            <img
+                                                                src={logoPreview}
+                                                                alt="Logo"
+                                                                style={{ maxWidth: '120px', maxHeight: '70px' }}
+                                                            />
+                                                            <p style={{ color: '#EE2C7C', fontSize: '13px', marginTop: '8px', marginBottom: 0 }}>Click to change</p>
+                                                        </div>
+                                                    ) : (
+                                                        <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>
+                                                            Click to upload your logo
+                                                        </p>
+                                                    )}
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={handleLogoUpload}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            opacity: 0,
+                                                            cursor: 'pointer'
+                                                        }}
                                                     />
-                                                    <p style={{ color: '#EE2C7C', fontSize: '13px', marginTop: '8px', marginBottom: 0 }}>Click to change</p>
                                                 </div>
-                                            ) : (
-                                                <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>
-                                                    Click to upload your logo
+                                                <button
+                                                    type="button"
+                                                    onClick={() => { setNoLogo(true); setLogoPreview(null); }}
+                                                    style={{
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        color: '#888',
+                                                        fontSize: '13px',
+                                                        marginTop: '10px',
+                                                        cursor: 'pointer',
+                                                        textDecoration: 'underline'
+                                                    }}
+                                                >
+                                                    I don't have a logo
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <div style={{
+                                                backgroundColor: '#f7f8f8',
+                                                borderRadius: '8px',
+                                                padding: '20px',
+                                                textAlign: 'center'
+                                            }}>
+                                                <p style={{ color: '#252525', fontSize: '14px', marginBottom: '16px' }}>
+                                                    Would you like us to design a logo for you?
                                                 </p>
-                                            )}
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleLogoUpload}
-                                                style={{
-                                                    position: 'absolute',
-                                                    top: 0,
-                                                    left: 0,
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    opacity: 0,
-                                                    cursor: 'pointer'
-                                                }}
-                                            />
-                                        </div>
+                                                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setNeedsLogoDesign(true)}
+                                                        style={{
+                                                            padding: '10px 24px',
+                                                            backgroundColor: needsLogoDesign === true ? '#EE2C7C' : 'white',
+                                                            color: needsLogoDesign === true ? 'white' : '#252525',
+                                                            border: '1px solid #ddd',
+                                                            borderRadius: '50px',
+                                                            fontSize: '14px',
+                                                            cursor: 'pointer'
+                                                        }}
+                                                    >
+                                                        Yes please
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setNeedsLogoDesign(false)}
+                                                        style={{
+                                                            padding: '10px 24px',
+                                                            backgroundColor: needsLogoDesign === false ? '#EE2C7C' : 'white',
+                                                            color: needsLogoDesign === false ? 'white' : '#252525',
+                                                            border: '1px solid #ddd',
+                                                            borderRadius: '50px',
+                                                            fontSize: '14px',
+                                                            cursor: 'pointer'
+                                                        }}
+                                                    >
+                                                        No thanks
+                                                    </button>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => { setNoLogo(false); setNeedsLogoDesign(null); }}
+                                                    style={{
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        color: '#888',
+                                                        fontSize: '13px',
+                                                        marginTop: '12px',
+                                                        cursor: 'pointer',
+                                                        textDecoration: 'underline'
+                                                    }}
+                                                >
+                                                    Actually, I do have a logo
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* First name */}
@@ -1160,36 +1240,6 @@ const TradeLandingPage = () => {
                                                 }}
                                             />
                                         </div>
-                                    </div>
-
-                                    {/* Extras */}
-                                    <div style={{ marginBottom: '28px' }}>
-                                        <label style={{
-                                            display: 'block',
-                                            color: '#252525',
-                                            fontWeight: '600',
-                                            marginBottom: '10px',
-                                            fontSize: '14px'
-                                        }}>
-                                            Anything else? <span style={{ color: '#999', fontWeight: '400' }}>(optional)</span>
-                                        </label>
-                                        <textarea
-                                            placeholder="Colours you like, style preferences, anything you want us to know..."
-                                            value={formData.extras}
-                                            onChange={(e) => setFormData({ ...formData, extras: e.target.value })}
-                                            rows={3}
-                                            style={{
-                                                width: '100%',
-                                                padding: '14px 16px',
-                                                border: '1px solid #ddd',
-                                                borderRadius: '6px',
-                                                fontSize: '15px',
-                                                outline: 'none',
-                                                resize: 'vertical',
-                                                fontFamily: 'inherit',
-                                                boxSizing: 'border-box'
-                                            }}
-                                        />
                                     </div>
 
                                     {/* Submit */}
