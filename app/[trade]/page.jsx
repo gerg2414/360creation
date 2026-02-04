@@ -717,6 +717,18 @@ const TradeLandingPage = () => {
                             </button>
                         </div>
                     </div>
+
+                    {/* Benefits line */}
+                    <p style={{
+                        textAlign: 'center',
+                        color: '#666',
+                        fontSize: '14px',
+                        marginTop: '32px'
+                    }}>
+                        <span style={{ color: '#10B981' }}>✓</span> Professional custom design{' · '}
+                        <span style={{ color: '#10B981' }}>✓</span> Optimised to generate enquiries{' · '}
+                        <span style={{ color: '#10B981' }}>✓</span> Mobile & desktop ready
+                    </p>
                 </div>
             </section>
 
@@ -727,50 +739,6 @@ const TradeLandingPage = () => {
                     onClose={() => setModalOpen(false)}
                 />
             )}
-
-            {/* Benefits strip */}
-            <section style={{
-                padding: '40px 24px',
-                backgroundColor: '#252525'
-            }}>
-                <div style={{
-                    maxWidth: '1200px',
-                    margin: '0 auto',
-                    textAlign: 'center'
-                }}>
-                    <p style={{
-                        color: 'white',
-                        fontSize: '16px',
-                        marginBottom: '20px',
-                        fontWeight: '500'
-                    }}>
-                        Our websites are designed with leads in mind
-                    </p>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        gap: '32px',
-                        flexWrap: 'wrap'
-                    }}>
-                        {[
-                            'Professional custom design',
-                            'Optimised to generate enquiries',
-                            'Mobile & desktop ready'
-                        ].map((benefit, index) => (
-                            <div key={index} style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                color: 'white',
-                                fontSize: '14px'
-                            }}>
-                                <span style={{ color: '#10B981' }}>✓</span>
-                                {benefit}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
 
             {/* How it works */}
             <section style={{
@@ -981,7 +949,7 @@ const TradeLandingPage = () => {
                                 textAlign: 'center',
                                 marginBottom: '32px'
                             }}>
-                                Fill this in and we'll have your design ready within 24 hours.
+                                Fill this in and we'll have your design ready within 48 hours.
                             </p>
 
                             <form onSubmit={handleSubmit} style={{
