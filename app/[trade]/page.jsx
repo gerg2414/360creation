@@ -30,6 +30,7 @@ const TradeLandingPage = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [viewingCount, setViewingCount] = useState(11);
     const [currentReview, setCurrentReview] = useState(0);
+    const [currentBenefit, setCurrentBenefit] = useState(0);
 
     const reviews = [
         {
@@ -51,6 +52,14 @@ const TradeLandingPage = () => {
         const interval = setInterval(() => {
             setCurrentReview(prev => (prev + 1) % reviews.length);
         }, 6000);
+        return () => clearInterval(interval);
+    }, []);
+
+    // Auto-rotate benefits every 3 seconds (mobile)
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentBenefit(prev => (prev + 1) % 3);
+        }, 3000);
         return () => clearInterval(interval);
     }, []);
 
@@ -724,31 +733,58 @@ const TradeLandingPage = () => {
                     </div>
 
                     {/* Benefits line */}
-                    <div className="benefits-line" style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        gap: '12px',
-                        flexWrap: 'wrap',
-                        marginTop: '48px'
+                    <div style={{
+                        marginTop: '48px',
+                        textAlign: 'center'
                     }}>
-                        {[
-                            'Professional custom design',
-                            'Optimised to generate enquiries',
-                            'Mobile & desktop ready'
-                        ].map((benefit, index) => (
-                            <span key={index} style={{
-                                color: '#252525',
-                                fontSize: '13px',
-                                whiteSpace: 'nowrap',
-                                backgroundColor: '#f7f8f8',
-                                padding: '10px 16px',
-                                borderRadius: '50px',
-                                fontWeight: '500'
+                        <div className="benefits-desktop" style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            gap: '40px',
+                            flexWrap: 'wrap'
+                        }}>
+                            {[
+                                'Professional custom design',
+                                'Optimised to generate enquiries',
+                                'Mobile & desktop ready'
+                            ].map((benefit, index) => (
+                                <span key={index} style={{
+                                    color: '#666',
+                                    fontSize: '16px',
+                                    whiteSpace: 'nowrap'
+                                }}>
+                                    <span style={{ color: '#10B981', marginRight: '8px' }}>✓</span>
+                                    {benefit}
+                                </span>
+                            ))}
+                        </div>
+                        <div className="benefits-mobile" style={{ display: 'none' }}>
+                            <span style={{
+                                color: '#666',
+                                fontSize: '15px'
                             }}>
-                                <span style={{ color: '#10B981', marginRight: '6px' }}>✓</span>
-                                {benefit}
+                                <span style={{ color: '#10B981', marginRight: '8px' }}>✓</span>
+                                {['Professional custom design', 'Optimised to generate enquiries', 'Mobile & desktop ready'][currentBenefit]}
                             </span>
-                        ))}
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                gap: '6px',
+                                marginTop: '12px'
+                            }}>
+                                {[0, 1, 2].map((i) => (
+                                    <div
+                                        key={i}
+                                        style={{
+                                            width: '6px',
+                                            height: '6px',
+                                            borderRadius: '50%',
+                                            backgroundColor: currentBenefit === i ? '#EE2C7C' : '#ddd'
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -1400,10 +1436,11 @@ const TradeLandingPage = () => {
           50% { opacity: 0.5; }
         }
         @media (max-width: 600px) {
-          .benefits-line {
-            flex-direction: column !important;
-            align-items: center !important;
-            gap: 12px !important;
+          .benefits-desktop {
+            display: none !important;
+          }
+          .benefits-mobile {
+            display: block !important;
           }
         }
       `}</style>
