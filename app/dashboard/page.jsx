@@ -354,27 +354,25 @@ export default function Dashboard() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '24px' }}>
               {/* UK Map */}
               <div style={{ position: 'relative', minHeight: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {/* Use an image-based UK map */}
+                {/* Use local UK map */}
                 <div style={{ position: 'relative', width: '280px', height: '400px' }}>
                   <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/d/d4/United_Kingdom_location_map.svg"
+                    src="/uk-map.svg"
                     alt="UK Map"
                     style={{
                       width: '100%',
                       height: '100%',
-                      objectFit: 'contain',
-                      filter: 'grayscale(100%) brightness(1.1)',
-                      opacity: 0.6
+                      objectFit: 'contain'
                     }}
                   />
                   {/* Overlay dots for live visitors */}
                   {liveVisitors.map((visitor, index) => {
-                    // Convert lat/lon to pixel position on the map image
-                    // UK bounds: lat 49.5-61, lon -11 to 2
-                    let left = '50%', top = '60%'; // Default to middle England
+                    // Convert lat/lon to pixel position on the map
+                    // UK bounds: lat 50-59, lon -10.5 to 2
+                    let left = '55%', top = '65%'; // Default to middle England
                     if (visitor.lat && visitor.lon) {
-                      const xPercent = ((visitor.lon + 11) / 13) * 100;
-                      const yPercent = ((61 - visitor.lat) / 11.5) * 100;
+                      const xPercent = ((visitor.lon + 10.5) / 12.5) * 70 + 15;
+                      const yPercent = ((59 - visitor.lat) / 9) * 70 + 5;
                       left = `${xPercent}%`;
                       top = `${yPercent}%`;
                     }
@@ -391,7 +389,7 @@ export default function Dashboard() {
                         <div style={{
                           width: '24px',
                           height: '24px',
-                          backgroundColor: 'rgba(238, 44, 124, 0.2)',
+                          backgroundColor: 'rgba(238, 44, 124, 0.3)',
                           borderRadius: '50%',
                           position: 'absolute',
                           top: '50%',
@@ -405,7 +403,8 @@ export default function Dashboard() {
                           backgroundColor: '#EE2C7C',
                           borderRadius: '50%',
                           position: 'relative',
-                          zIndex: 1
+                          zIndex: 1,
+                          boxShadow: '0 0 8px rgba(238, 44, 124, 0.5)'
                         }} />
                       </div>
                     );
@@ -414,7 +413,7 @@ export default function Dashboard() {
                 <style>{`
                   @keyframes ping {
                     0% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
-                    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+                    100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
                   }
                 `}</style>
               </div>
